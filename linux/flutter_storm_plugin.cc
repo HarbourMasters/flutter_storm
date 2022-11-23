@@ -5,10 +5,78 @@
 #include <sys/utsname.h>
 
 #include <cstring>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "StormLib.h"
+
+using namespace flutter;
 
 #define FLUTTER_STORM_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), flutter_storm_plugin_get_type(), \
                               FlutterStormPlugin))
+
+#define METHOD(name) if(method_call.method_name().compare(name) == 0)
+#define ASSERT(arg) if(!arg) {                                               \
+                        result->Error("argument_error", #arg " is missing"); \
+                        return;                                              \
+                    }                                                        \
+
+std::vector<HANDLE> mpqInstances;
+std::vector<HANDLE> fileInstances;
+
+const EncodableValue* ValueOrNull(const EncodableMap & map, const char* key) {
+    auto it = map.find(EncodableValue(key));
+    if (it == map.end()) {
+        return nullptr;
+    }
+    return &(it->second);
+}
+
+// Looks for |key| in |map|, returning the associated int64 value if it is
+// present, or std::nullopt if not.
+std::optional<int64_t> GetInt64ValueOrNull(const EncodableMap & map, const char* key) {
+    auto value = ValueOrNull(map, key);
+    if (!value) {
+        return std::nullopt;
+    }
+
+    if (std::holds_alternative<int32_t>(*value)) {
+        return static_cast<int64_t>(std::get<int32_t>(*value));
+    }
+    auto val64 = std::get_if<int64_t>(value);
+    if (!val64) {
+        return std::nullopt;
+    }
+    return *val64;
+}
+
+std::optional<std::string> GetStringOrNull(const EncodableMap& map, const char* key) {
+    auto value = ValueOrNull(map, key);
+    if (!value) {
+        return std::nullopt;
+    }
+
+    auto str = std::get_if<std::string>(value);
+    if (!str) {
+        return std::nullopt;
+    }
+    return *str;
+}
+
+std::optional<std::vector<uint8_t>> GetU8ListOrNull(const EncodableMap& map, const char* key) {
+    auto value = ValueOrNull(map, key);
+    if (!value) {
+        return std::nullopt;
+    }
+
+    auto list = std::get_if<std::vector<uint8_t>>(value);
+    if (!list) {
+        return std::nullopt;
+    }
+    return *list;
+}
 
 struct _FlutterStormPlugin {
   GObject parent_instance;

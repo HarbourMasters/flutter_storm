@@ -11,6 +11,23 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 # not be changed.
 set(PLUGIN_NAME "flutter_storm_plugin")
 
+#=================== StormLib ===================
+
+set(STORM_GIT_REPO https://github.com/ladislav-zezula/StormLib.git)
+set(STORM_GIT_COMMIT 3235d01eab95af50c589a615bd8d492f911369f7)
+set(STORM_SKIP_INSTALL ON)
+add_definitions(-DSTORMLIB_NO_AUTO_LINK)
+include(FetchContent)
+FetchContent_Declare(StormLib GIT_REPOSITORY ${STORM_GIT_REPO} GIT_TAG ${STORM_GIT_COMMIT})
+FetchContent_GetProperties(StormLib)
+if(NOT stormlib_POPULATED)
+  FetchContent_Populate(StormLib)
+  add_subdirectory(${stormlib_SOURCE_DIR} ${stormlib_BINARY_DIR})
+  include_directories(${stormlib_SOURCE_DIR}/src)
+endif()
+
+#================================================
+
 # Define the plugin library target. Its name must not be changed (see comment
 # on PLUGIN_NAME above).
 #
