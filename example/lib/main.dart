@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_storm/bridge/flags.dart';
 import 'dart:async';
 
 import 'package:flutter_storm/flutter_storm.dart';
-import 'package:flutter_storm/flutter_storm_platform_interface.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,19 +23,19 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    writeDemoFile();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    int? mpqHandle = await FlutterStormPlatform.instance.SFileCreateArchive("I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
+  Future<void> writeDemoFile() async {
+    int? mpqHandle = await SFileCreateArchive("I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
 
     File data = File("C:\\Users\\Ruine\\3D Objects\\lewd.png");
 
-    int? fileHandle = await FlutterStormPlatform.instance.SFileCreateFile(mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
-    await FlutterStormPlatform.instance.SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(), MPQ_COMPRESSION_ZLIB);
-    await FlutterStormPlatform.instance.SFileFinishFile(fileHandle);
-    await FlutterStormPlatform.instance.SFileCloseArchive(mpqHandle);
+    int? fileHandle = await SFileCreateFile(mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
+    await SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(), MPQ_COMPRESSION_ZLIB);
+    await SFileFinishFile(fileHandle);
+    await SFileCloseArchive(mpqHandle);
 
     if (!mounted) return;
 

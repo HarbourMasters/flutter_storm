@@ -1,21 +1,23 @@
-import 'package:flutter_storm/flutter_storm.dart';
-import 'package:flutter_storm/flutter_storm_platform_interface.dart';
+// Abstraction layer for the future
 
-class MPQFile {
+// import 'package:flutter_storm/flutter_storm.dart';
+// import 'package:flutter_storm/flutter_storm_platform_interface.dart';
 
-  String archiveName;
+// class MPQFile {
 
-  // Internal pointer to the MPQ instance
-  late int _handleID;
+//   String archiveName;
 
-  MPQFile({
-    required this.archiveName
-  });
+//   // Internal pointer to the MPQ instance
+//   late int _handleID;
 
-  void create({
-    int mpqFlags = MPQ_CREATE_ARCHIVE_V4,
-    int maxFileCount = 0
-  }) {
+//   MPQFile({
+//     required this.archiveName
+//   });
 
-  }
-}
+//   void create({
+//     int mpqFlags = MPQ_CREATE_ARCHIVE_V4,
+//     int maxFileCount = 0
+//   }) {
+
+//   }
+// }
