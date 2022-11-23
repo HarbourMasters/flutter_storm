@@ -161,13 +161,11 @@ namespace flutter_storm {
 
             auto hMpq     = GetInt64ValueOrNull(*arguments, "hMpq");
             auto fileName = GetStringOrNull(*arguments, "fileName");
-            auto fileTime = GetInt64ValueOrNull(*arguments, "fileTime");
             auto fileSize = GetInt64ValueOrNull(*arguments, "fileSize");
             auto dwFlags  = GetInt64ValueOrNull(*arguments, "dwFlags");
 
             ASSERT(hMpq);
             ASSERT(fileName);
-            ASSERT(fileTime);
             ASSERT(fileSize);
             ASSERT(dwFlags);
 

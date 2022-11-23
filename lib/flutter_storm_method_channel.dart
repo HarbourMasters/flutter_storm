@@ -26,11 +26,10 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileTime, int fileSize, int dwFlags) async {
+  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
     final handle = await methodChannel.invokeMethod<int>('SFileCreateFile', {
       'hMpq': hMpq,
       'fileName': fileName,
-      'fileTime': fileTime,
       'fileSize': fileSize,
       'dwFlags': dwFlags
     });

@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
 
     File data = File("C:\\Users\\Ruine\\3D Objects\\lewd.png");
 
-    int? fileHandle = await FlutterStormPlatform.instance.SFileCreateFile(mpqHandle!, "DemoFile.uwu", 0, data.lengthSync(), MPQ_FILE_COMPRESS);
+    int? fileHandle = await FlutterStormPlatform.instance.SFileCreateFile(mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
     await FlutterStormPlatform.instance.SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(), MPQ_COMPRESSION_ZLIB);
     await FlutterStormPlatform.instance.SFileFinishFile(fileHandle);
     await FlutterStormPlatform.instance.SFileCloseArchive(mpqHandle);
