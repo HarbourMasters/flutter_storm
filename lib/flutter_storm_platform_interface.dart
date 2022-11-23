@@ -20,6 +20,10 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throw UnimplementedError('throwUnimplemented() has not been implemented.');
   }
 
+  Future<int?> SFileOpenArchive(String mpqName, int mpqFlags) async {
+    throwUnimplemented();
+  }
+
   Future<int?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
     throwUnimplemented();
   }
@@ -28,11 +32,23 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
+  Future<bool?> SFileHasFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
+    throwUnimplemented();
+  }
+
   Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
     throwUnimplemented();
   }
 
   Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
+    throwUnimplemented();
+  }
+
+  Future<void> SFileRemoveFile(int hMpq, String fileName) async {
+    throwUnimplemented();
+  }
+
+  Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) async {
     throwUnimplemented();
   }
 

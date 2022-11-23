@@ -9,6 +9,15 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   final methodChannel = const MethodChannel('flutter_storm');
 
   @override
+  Future<int?> SFileOpenArchive(String mpqName, int mpqFlags) async {
+    final handle = await methodChannel.invokeMethod<int>('SFileOpenArchive', {
+      'mpqName': mpqName,
+      'mpqFlags': mpqFlags
+    });
+    return handle;
+  }
+
+  @override
   Future<int?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
     final handle = await methodChannel.invokeMethod<int>('SFileCreateArchive', {
       'mpqName': mpqName,
@@ -21,6 +30,15 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   Future<int?> SFileCloseArchive(int hMpq) async {
     final handle = await methodChannel.invokeMethod<int>('SFileCloseArchive', {
       'hMpq': hMpq
+    });
+    return handle;
+  }
+
+  @override
+  Future<bool?> SFileHasFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
+    final handle = await methodChannel.invokeMethod<bool>('SFileHasFile', {
+      'hMpq': hMpq,
+      'fileName': fileName
     });
     return handle;
   }
@@ -45,6 +63,24 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
       'dwCompression': dwCompression
     });
   }
+
+  @override
+  Future<void> SFileRemoveFile(int hMpq, String fileName) async {
+    await methodChannel.invokeMethod<int>('SFileRemoveFile', {
+      'hMpq': hMpq,
+      'fileName': fileName
+    });
+  }
+
+  @override
+  Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) async {
+    await methodChannel.invokeMethod<int>('SFileRenameFile', {
+      'hMpq': hMpq,
+      'oldFileName': oldFileName,
+      'newFileName': newFileName
+    });
+  }
+
 
   @override
   Future<void> SFileFinishFile(int hFile) async {

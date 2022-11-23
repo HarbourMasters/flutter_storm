@@ -3,9 +3,6 @@
 // This must be included before many other Windows headers.
 #include <windows.h>
 
-// For getPlatformVersion; remove unless needed for your plugin implementation.
-#include <VersionHelpers.h>
-
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
@@ -104,6 +101,31 @@ namespace flutter_storm {
         const flutter::MethodCall<flutter::EncodableValue>& method_call,
         std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 
+        METHOD("SFileOpenArchive") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto mpqName = GetStringOrNull(*arguments, "mpqName");
+            auto mpqFlags = GetInt64ValueOrNull(*arguments, "mpqFlags");
+            ASSERT(mpqName);
+            ASSERT(mpqFlags);
+
+            std::wstring wName;
+            wName.assign((*mpqName).begin(), (*mpqName).end());
+
+            HANDLE mpqFile;
+            bool rs = SFileOpenArchive(wName.c_str(), 0, *mpqFlags, &mpqFile);
+
+            if (rs) {
+                result->Success(flutter::EncodableValue((int)mpqInstances.size()));
+                mpqInstances.push_back(mpqFile);
+                return;
+            }
+
+            result->Error("storm_error", "Failed to open MPQ [" + std::to_string(GetLastError()) + "]");
+            return;
+        }
+
         METHOD("SFileCreateArchive") {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -155,6 +177,23 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileHasFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto fileName = GetStringOrNull(*arguments, "fileName");
+
+            ASSERT(hMpq);
+            ASSERT(fileName);
+
+
+            bool rs = SFileHasFile(mpqInstances.at(*hMpq), (*fileName).c_str());
+            result->Success(flutter::EncodableValue(rs));
+
+            return;
+        }
+
         METHOD("SFileCreateFile") {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -168,11 +207,6 @@ namespace flutter_storm {
             ASSERT(fileName);
             ASSERT(fileSize);
             ASSERT(dwFlags);
-
-            // if ((*hMpq) < 0 || mpqInstances.size() > (*hMpq) || mpqInstances.at(*hMpq) == nullptr) {
-            //    result->Error("storm_error", "The specified mpq handle does not exists");
-            //    return;
-            // }
 
             SYSTEMTIME sysTime;
             GetSystemTime(&sysTime);
@@ -207,11 +241,6 @@ namespace flutter_storm {
             ASSERT(dwSize);
             ASSERT(dwCompression);
 
-            // if ((*hMpq) < 0 || mpqInstances.size() > (*hMpq) || mpqInstances.at(*hMpq) == nullptr) {
-            //    result->Error("storm_error", "The specified mpq handle does not exists");
-            //    return;
-            // }
-
             bool rs = SFileWriteFile(fileInstances.at(*hFile), (*pvData).data(), *dwSize, *dwCompression);
 
             if (rs) {
@@ -223,6 +252,50 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileRemoveFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto fileName = GetStringOrNull(*arguments, "fileName");
+
+            ASSERT(hMpq);
+            ASSERT(fileName);
+
+            bool rs = SFileRemoveFile(mpqInstances.at(*hMpq), (*fileName).c_str(), 0);
+
+            if (rs) {
+                result->Success();
+                return;
+            }
+
+            result->Error("storm_error", "Failed to remove file [" + std::to_string(GetLastError()) + "]");
+            return;
+        }
+
+        METHOD("SFileRenameFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto oldFileName = GetStringOrNull(*arguments, "oldFileName");
+            auto newFileName = GetStringOrNull(*arguments, "newFileName");
+
+            ASSERT(hMpq);
+            ASSERT(oldFileName);
+            ASSERT(newFileName);
+
+            bool rs = SFileRenameFile(mpqInstances.at(*hMpq), (*oldFileName).c_str(), (*newFileName).c_str());
+
+            if (rs) {
+                result->Success();
+                return;
+            }
+
+            result->Error("storm_error", "Failed to rename file [" + std::to_string(GetLastError()) + "]");
+            return;
+        }
+
         METHOD("SFileFinishFile") {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -230,11 +303,6 @@ namespace flutter_storm {
             auto hFile = GetInt64ValueOrNull(*arguments, "hFile");
 
             ASSERT(hFile);
-
-            // if ((*hMpq) < 0 || mpqInstances.size() > (*hMpq) || mpqInstances.at(*hMpq) == nullptr) {
-            //    result->Error("storm_error", "The specified mpq handle does not exists");
-            //    return;
-            // }
 
             bool rs = SFileFinishFile(fileInstances.at(*hFile));
 
