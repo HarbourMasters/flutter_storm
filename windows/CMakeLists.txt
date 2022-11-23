@@ -20,6 +20,7 @@ list(APPEND PLUGIN_SOURCES
   "flutter_storm_plugin.h"
 )
 
+add_definitions("/wd4018")
 add_definitions("/wd4101")
 add_definitions("/wd4267")
 add_definitions("/wd4334")
@@ -32,7 +33,12 @@ add_definitions(-DSTORMLIB_NO_AUTO_LINK)
 include(FetchContent)
 FetchContent_Declare(StormLib GIT_REPOSITORY https://github.com/ladislav-zezula/StormLib.git
                          GIT_TAG 3235d01eab95af50c589a615bd8d492f911369f7)
-FetchContent_MakeAvailable(StormLib)
+FetchContent_GetProperties(StormLib)
+if(NOT stormlib_POPULATED)
+  FetchContent_Populate(StormLib)
+  add_subdirectory(${stormlib_SOURCE_DIR} ${stormlib_BINARY_DIR})
+  include_directories(${stormlib_SOURCE_DIR}/src)
+endif()
 
 #=============================================
 
@@ -59,8 +65,9 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
+  "${CMAKE_CURRENT_SOURCE_DIR}/include" )
+
+target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin )
 if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
   target_link_libraries(${PLUGIN_NAME} PRIVATE ../../_deps/stormlib-build/Release/StormLib)
 else()

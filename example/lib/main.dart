@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_storm/flutter_storm.dart';
 import 'package:flutter_storm/flutter_storm_platform_interface.dart';
 
@@ -29,9 +30,13 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     int? mpqHandle = await FlutterStormPlatform.instance.SFileCreateArchive("I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
+    File data = File("C:\\Users\\Ruine\\3D Objects\\lewd.png");
+
+    int? fileHandle = await FlutterStormPlatform.instance.SFileCreateFile(mpqHandle!, "DemoFile.uwu", 0, data.lengthSync(), MPQ_FILE_COMPRESS);
+    await FlutterStormPlatform.instance.SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(), MPQ_COMPRESSION_ZLIB);
+    await FlutterStormPlatform.instance.SFileFinishFile(fileHandle);
+    await FlutterStormPlatform.instance.SFileCloseArchive(mpqHandle);
+
     if (!mounted) return;
 
     setState(() {

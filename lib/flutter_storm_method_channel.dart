@@ -26,9 +26,9 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCreateFile(int hFile, String fileName, int fileTime, int fileSize, int dwFlags) async {
+  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileTime, int fileSize, int dwFlags) async {
     final handle = await methodChannel.invokeMethod<int>('SFileCreateFile', {
-      'hFile': hFile,
+      'hMpq': hMpq,
       'fileName': fileName,
       'fileTime': fileTime,
       'fileSize': fileSize,
@@ -38,21 +38,19 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileWriteFile', {
+  Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
+    await methodChannel.invokeMethod<void>('SFileWriteFile', {
       'hFile': hFile,
       'pvData': pvData,
       'dwSize': dwSize,
       'dwCompression': dwCompression
     });
-    return handle;
   }
 
   @override
-  Future<int?> SFileFinishFile(int hFile) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileFinishFile', {
-      'handle': hFile
+  Future<void> SFileFinishFile(int hFile) async {
+    await methodChannel.invokeMethod<void>('SFileFinishFile', {
+      'hFile': hFile
     });
-    return handle;
   }
 }
