@@ -1,0 +1,22 @@
+PODS:
+  - flutter_storm (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+
+DEPENDENCIES:
+  - flutter_storm (from `Flutter/ephemeral/.symlinks/plugins/flutter_storm/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+
+EXTERNAL SOURCES:
+  flutter_storm:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_storm/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+
+SPEC CHECKSUMS:
+  flutter_storm: 267be02090211a40c55f422192454dbe5a81be97
+  FlutterMacOS: ae6af50a8ea7d6103d888583d46bd8328a7e9811
+
+PODFILE CHECKSUM: 6eac6b3292e5142cfc23bdeb71848a40ec51c14c
+
+COCOAPODS: 1.11.3
