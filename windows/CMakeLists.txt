@@ -27,9 +27,12 @@ add_definitions("/wd4244")
 
 #=================== StormLib ===================
 
-set(STORM_SKIP_INSTALL)
+set(STORM_SKIP_INSTALL ON)
 add_definitions(-DSTORMLIB_NO_AUTO_LINK)
-add_subdirectory(StormLib)
+include(FetchContent)
+FetchContent_Declare(StormLib GIT_REPOSITORY https://github.com/ladislav-zezula/StormLib.git
+                         GIT_TAG 3235d01eab95af50c589a615bd8d492f911369f7)
+FetchContent_MakeAvailable(StormLib)
 
 #=============================================
 
@@ -59,9 +62,9 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
-  target_link_libraries(${PLUGIN_NAME} PRIVATE StormLib/Release/StormLib)
+  target_link_libraries(${PLUGIN_NAME} PRIVATE ../../_deps/stormlib-build/Release/StormLib)
 else()
-  target_link_libraries(${PLUGIN_NAME} PRIVATE StormLib/Debug/StormLib)
+  target_link_libraries(${PLUGIN_NAME} PRIVATE ../../_deps/stormlib-build/Debug/StormLib)
 endif()
 
 
