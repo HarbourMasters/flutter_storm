@@ -28,12 +28,15 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> writeDemoFile() async {
-    int? mpqHandle = await SFileCreateArchive("I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
+    int? mpqHandle = await SFileCreateArchive(
+        "I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
 
     File data = File("C:\\Users\\Ruine\\3D Objects\\lewd.png");
 
-    int? fileHandle = await SFileCreateFile(mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
-    await SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(), MPQ_COMPRESSION_ZLIB);
+    int? fileHandle = await SFileCreateFile(
+        mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
+    await SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(),
+        MPQ_COMPRESSION_ZLIB);
     await SFileFinishFile(fileHandle);
     await SFileCloseArchive(mpqHandle);
 

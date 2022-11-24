@@ -15,8 +15,9 @@ set(PLUGIN_NAME "flutter_storm_plugin")
 
 set(STORM_GIT_REPO https://github.com/ladislav-zezula/StormLib.git)
 set(STORM_GIT_COMMIT 3235d01eab95af50c589a615bd8d492f911369f7)
+set(BUILD_SHARED_LIBS ON)
 set(STORM_SKIP_INSTALL ON)
-add_definitions(-DSTORMLIB_NO_AUTO_LINK)
+add_definitions(-DSTORMLIB_NO_AUTO_LINK -fPIC)
 include(FetchContent)
 FetchContent_Declare(StormLib GIT_REPOSITORY ${STORM_GIT_REPO} GIT_TAG ${STORM_GIT_COMMIT})
 FetchContent_GetProperties(StormLib)
@@ -54,6 +55,7 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${stormlib_BINARY_DIR}/libstorm.a)
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an

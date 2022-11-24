@@ -8,75 +8,29 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
+#include <variant>
 
 #include "StormLib.h"
 
-using namespace flutter;
-
 #define FLUTTER_STORM_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), flutter_storm_plugin_get_type(), \
-                              FlutterStormPlugin))
+                              FlutterStormPlugin))                                                                                                         \
 
-#define METHOD(name) if(method_call.method_name().compare(name) == 0)
-#define ASSERT(arg) if(!arg) {                                               \
-                        result->Error("argument_error", #arg " is missing"); \
-                        return;                                              \
-                    }                                                        \
+#define VALUE(arg, type) fl_value_get_##type(fl_value_lookup_string(args, arg));
+
+#define METHOD(name) if(strcmp(method, name) == 0)
+#define ASSERT(arg) if(fl_value_get_type(fl_value_lookup_string(args, #arg)) == FL_VALUE_TYPE_NULL) {                                \
+                        response = FL_METHOD_RESPONSE(fl_method_error_response_new("argument_error", #arg " is missing", nullptr));  \
+                        fl_method_call_respond(method_call, response, nullptr);                                                      \
+                        return;                                                                                                      \
+                    } \
+
+#define SUCCESS_ARG(data, type) response = FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_##type(data)))
+#define ERROR(error) response = FL_METHOD_RESPONSE(fl_method_error_response_new("storm_error", (error).c_str(), nullptr))
 
 std::vector<HANDLE> mpqInstances;
 std::vector<HANDLE> fileInstances;
-
-const EncodableValue* ValueOrNull(const EncodableMap & map, const char* key) {
-    auto it = map.find(EncodableValue(key));
-    if (it == map.end()) {
-        return nullptr;
-    }
-    return &(it->second);
-}
-
-// Looks for |key| in |map|, returning the associated int64 value if it is
-// present, or std::nullopt if not.
-std::optional<int64_t> GetInt64ValueOrNull(const EncodableMap & map, const char* key) {
-    auto value = ValueOrNull(map, key);
-    if (!value) {
-        return std::nullopt;
-    }
-
-    if (std::holds_alternative<int32_t>(*value)) {
-        return static_cast<int64_t>(std::get<int32_t>(*value));
-    }
-    auto val64 = std::get_if<int64_t>(value);
-    if (!val64) {
-        return std::nullopt;
-    }
-    return *val64;
-}
-
-std::optional<std::string> GetStringOrNull(const EncodableMap& map, const char* key) {
-    auto value = ValueOrNull(map, key);
-    if (!value) {
-        return std::nullopt;
-    }
-
-    auto str = std::get_if<std::string>(value);
-    if (!str) {
-        return std::nullopt;
-    }
-    return *str;
-}
-
-std::optional<std::vector<uint8_t>> GetU8ListOrNull(const EncodableMap& map, const char* key) {
-    auto value = ValueOrNull(map, key);
-    if (!value) {
-        return std::nullopt;
-    }
-
-    auto list = std::get_if<std::vector<uint8_t>>(value);
-    if (!list) {
-        return std::nullopt;
-    }
-    return *list;
-}
 
 struct _FlutterStormPlugin {
   GObject parent_instance;
@@ -88,21 +42,50 @@ G_DEFINE_TYPE(FlutterStormPlugin, flutter_storm_plugin, g_object_get_type())
 static void flutter_storm_plugin_handle_method_call(
     FlutterStormPlugin* self,
     FlMethodCall* method_call) {
-  g_autoptr(FlMethodResponse) response = nullptr;
+    g_autoptr(FlMethodResponse) response = nullptr;
+    const gchar* method = fl_method_call_get_name(method_call);
+    FlValue* args = fl_method_call_get_args(method_call);
 
-  const gchar* method = fl_method_call_get_name(method_call);
+    METHOD("SFileOpenArchive") {
+        ASSERT(mpqName);
+        ASSERT(mpqFlags);
 
-  if (strcmp(method, "getPlatformVersion") == 0) {
-    struct utsname uname_data = {};
-    uname(&uname_data);
-    g_autofree gchar *version = g_strdup_printf("Linux %s", uname_data.version);
-    g_autoptr(FlValue) result = fl_value_new_string(version);
-    response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-  } else {
-    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
-  }
+        std::string mpqName = VALUE("mpqName", string);
+        int mpqFlags = VALUE("mpqFlags", int);
 
-  fl_method_call_respond(method_call, response, nullptr);
+        HANDLE mpqFile;
+        bool rs = SFileOpenArchive(mpqName.c_str(), 0, mpqFlags, &mpqFile);
+
+        if (rs) {
+            SUCCESS_ARG((int)mpqInstances.size(), int);
+            mpqInstances.push_back(mpqFile);
+        } else {
+            ERROR("Failed to open MPQ [" + std::to_string(GetLastError()) + "]");
+        }
+        fl_method_call_respond(method_call, response, nullptr);
+    }
+
+    METHOD("SFileOpenArchive") {
+
+        ASSERT(mpqName);
+        ASSERT(mpqFlags);
+        ASSERT(maxFileCount);
+
+        std::string mpqName = VALUE("mpqName", string);
+        int mpqFlags = VALUE("mpqFlags", int);
+        int maxFileCount = VALUE("maxFileCount", int);
+
+        HANDLE mpqFile;
+        bool rs = SFileCreateArchive(mpqName.c_str(), mpqFlags, maxFileCount, &mpqFile);
+
+        if (rs) {
+            SUCCESS_ARG((int)mpqInstances.size(), int);
+            mpqInstances.push_back(mpqFile);
+        } else {
+            ERROR("Failed to create MPQ [" + std::to_string(GetLastError()) + "]");
+        }
+        fl_method_call_respond(method_call, response, nullptr);
+    }
 }
 
 static void flutter_storm_plugin_dispose(GObject* object) {
