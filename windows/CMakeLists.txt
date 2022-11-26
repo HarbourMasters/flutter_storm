@@ -68,13 +68,8 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin )
-if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
-  target_link_libraries(${PLUGIN_NAME} PRIVATE ../../_deps/stormlib-build/Release/StormLib)
-else()
-  target_link_libraries(${PLUGIN_NAME} PRIVATE ../../_deps/stormlib-build/Debug/StormLib)
-endif()
-
+target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin
+  ${stormlib_BINARY_DIR}/StormLib )
 
 target_compile_options(${PLUGIN_NAME}
   PRIVATE "/wd4101;/wd4267;/wd4334;/wd4244"
