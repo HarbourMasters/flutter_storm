@@ -40,6 +40,10 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
+  Future<int?> SFileCloseFile(int hFile) async {
+    throwUnimplemented();
+  }
+
   Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
     throwUnimplemented();
   }

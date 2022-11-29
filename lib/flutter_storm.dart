@@ -21,6 +21,10 @@ Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlag
   return FlutterStormPlatform.instance.SFileCreateFile(hMpq, fileName, fileSize, dwFlags);
 }
 
+Future<int?> SFileCloseFile(int hFile) async {
+  return FlutterStormPlatform.instance.SFileCloseFile(hFile);
+}
+
 Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
   return FlutterStormPlatform.instance.SFileWriteFile(hFile, pvData, dwSize, dwCompression);
 }
@@ -32,7 +36,6 @@ Future<void> SFileRemoveFile(int hMpq, String fileName) async {
 Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) async {
   return FlutterStormPlatform.instance.SFileRenameFile(hMpq, oldFileName, newFileName);
 }
-
 
 Future<void> SFileFinishFile(int hFile) async {
   return FlutterStormPlatform.instance.SFileFinishFile(hFile);

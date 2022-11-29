@@ -55,6 +55,13 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
+  Future<int?> SFileCloseFile(int hFile) async {
+    final handle = await methodChannel
+        .invokeMethod<int>('SFileCloseFile', {'hFile': hFile});
+    return handle;
+  }
+
+  @override
   Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
     await methodChannel.invokeMethod<void>('SFileWriteFile', {
       'hFile': hFile,

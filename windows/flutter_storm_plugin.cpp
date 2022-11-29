@@ -227,6 +227,25 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileCloseFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hFile = GetInt64ValueOrNull(*arguments, "hFile");
+            ASSERT(hFile);
+
+            bool rs = SFileCloseFile(fileInstances.at(*hFile));
+
+            if (rs) {
+                result->Success(flutter::EncodableValue((int)fileInstances.size()));
+                fileInstances.erase(fileInstances.begin() + *hFile);
+                return;
+            }
+
+            result->Error("storm_error", "Failed to close file [" + std::to_string(GetLastError()) + "]");
+            return;
+        }
+
         METHOD("SFileWriteFile") {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
