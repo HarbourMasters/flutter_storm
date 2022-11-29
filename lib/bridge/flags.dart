@@ -32,3 +32,20 @@ const int MPQ_COMPRESSION_SPARSE           = 0x20;  // Sparse compression (added
 const int MPQ_COMPRESSION_ADPCM_MONO       = 0x40;  // IMA ADPCM compression (mono)
 const int MPQ_COMPRESSION_ADPCM_STEREO     = 0x80;  // IMA ADPCM compression (stereo)
 const int MPQ_COMPRESSION_LZMA             = 0x12;  // LZMA compression. Added in Starcraft 2. This value is NOT a combination of flags.
+
+const int STREAM_FLAG_READ_ONLY      = 0x00000100;  // Stream is read only
+const int STREAM_FLAG_WRITE_SHARE    = 0x00000200;  // Allow write sharing when open for write
+const int STREAM_FLAG_USE_BITMAP     = 0x00000400;  // If the file has a file bitmap, load it and use it
+const int STREAM_OPTIONS_MASK        = 0x0000FF00;  // Mask for stream options
+
+const int STREAM_PROVIDERS_MASK      = 0x000000FF;  // Mask to get stream providers
+const int STREAM_FLAGS_MASK          = 0x0000FFFF;  // Mask for all stream flags (providers+options)
+
+const int MPQ_OPEN_NO_LISTFILE        = 0x00010000;  // Don't load the internal listfile
+const int MPQ_OPEN_NO_ATTRIBUTES      = 0x00020000;  // Don't open the attributes
+const int MPQ_OPEN_NO_HEADER_SEARCH   = 0x00040000;  // Don't search for the MPQ header past the begin of the file
+const int MPQ_OPEN_FORCE_MPQ_V1       = 0x00080000;  // Always open the archive as MPQ v 1.00, ignore the "wFormatVersion" variable in the header
+const int MPQ_OPEN_CHECK_SECTOR_CRC   = 0x00100000;  // On files with MPQ_FILE_SECTOR_CRC, the CRC will be checked when reading file
+const int MPQ_OPEN_PATCH              = 0x00200000;  // This archive is a patch MPQ. Used internally.
+const int MPQ_OPEN_FORCE_LISTFILE     = 0x00400000;  // Force add listfile even if there is none at the moment of opening
+const int MPQ_OPEN_READ_ONLY          = STREAM_FLAG_READ_ONLY;  // Open the archive in read-only mode
