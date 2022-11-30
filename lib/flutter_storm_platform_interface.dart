@@ -60,7 +60,9 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
-  Future<List<String>?> SFileListArchive(int hMpq) async {
+  Future<List<Object?>> SFileListArchive(int hMpq) async {
     throwUnimplemented();
+
+    return [];
   }
 }

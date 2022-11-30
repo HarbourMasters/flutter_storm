@@ -41,6 +41,6 @@ Future<void> SFileFinishFile(int hFile) async {
   return FlutterStormPlatform.instance.SFileFinishFile(hFile);
 }
 
-Future<List<String>?> SFileListArchive(int hMpq) async {
+Future<List<Object?>> SFileListArchive(int hMpq) async {
   return FlutterStormPlatform.instance.SFileListArchive(hMpq);
 }

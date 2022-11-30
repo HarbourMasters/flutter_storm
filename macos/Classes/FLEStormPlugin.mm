@@ -78,7 +78,7 @@ NSString *const kFileListArchive = @"SFileListArchive";
         bool success = SFileOpenArchive([mpqName UTF8String], [mpqFlags unsignedIntValue], 0, &mpqHandle);
         if (success) {
             _archives.push_back(mpqHandle);
-            methodResult = [NSNumber numberWithUnsignedLongLong:(unsigned long long)mpqHandle];
+            methodResult = [NSNumber numberWithUnsignedLongLong:(unsigned long long)_archives.size() - 1];
         } else {
             methodResult = [NSNumber numberWithUnsignedLongLong:0];
         }
@@ -221,24 +221,44 @@ NSString *const kFileListArchive = @"SFileListArchive";
     } else if ([call.method isEqualToString:kFileListArchive]) {
         NSDictionary *args = call.arguments;
         NSNumber *mpqHandle = args[@"hMpq"];
+        SFILE_FIND_DATA findContext;
 
         // check mpqHandle is valid
         if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            HANDLE hFind = SFileFindFirstFile(_archives[[mpqHandle unsignedLongLongValue]], "*", NULL, NULL);
+            HANDLE hFind = SFileFindFirstFile(_archives[[mpqHandle unsignedLongLongValue]], "*", &findContext, NULL);
             if (hFind != NULL) {
                 NSMutableArray *fileList = [[NSMutableArray alloc] init];
+
+                bool fileFound;
+
                 do {
-                    char szFileName[MAX_PATH];
-                    if (SFileGetFileName(hFind, szFileName)) {
-                        [fileList addObject:[NSString stringWithUTF8String:szFileName]];
+                    fileFound = SFileFindNextFile(hFind, &findContext);
+
+                    if (fileFound) {
+                        NSString *fileName = [NSString stringWithUTF8String:findContext.cFileName];
+                        if ([fileName isEqualToString:@"(signature)"]) {
+                            continue;
+                        }
+
+                        [fileList addObject:fileName];
+                    } else if (!fileFound && GetLastError() != ERROR_NO_MORE_FILES) {
+                        if (!SFileFindClose(hFind)) {
+                            methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+                        }
                     }
-                } while (SFileFindNextFile(hFind));
-                SFileFindClose(hFind);
+                } while (fileFound);
+
                 methodResult = fileList;
-            } else {
+            } else if (GetLastError() != ERROR_NO_MORE_FILES) {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+
+            if (hFind != nullptr) {
+                if (!SFileFindClose(hFind)) {
+                    methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+                }
             }
         }
     } else {

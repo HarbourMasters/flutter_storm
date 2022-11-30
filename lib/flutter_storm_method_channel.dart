@@ -97,11 +97,11 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<List<String>?> SFileListArchive(int hMpq) async {
-    final handle = await methodChannel.invokeMethod<void>('SFileListArchive', {
+  Future<List<Object?>> SFileListArchive(int hMpq) async {
+    final handle = await methodChannel.invokeMethod<List<Object?>>('SFileListArchive', {
       'hMpq': hMpq
     });
 
-    return handle;
+    return handle!;
   }
 }
