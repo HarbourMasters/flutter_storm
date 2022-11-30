@@ -211,7 +211,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     if(outputMPQ == null)
-                    const Center(child: Text("Please select a file to write to the MPQ", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600))),
+                    const Center(child: Text("Please select a path to save the mpq", style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600))),
                     ..._outFiles.map((e) => Text(e)).toList(),
                     if(outputMPQ != null)
                     Padding(
