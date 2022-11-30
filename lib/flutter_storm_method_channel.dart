@@ -9,8 +9,8 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   final methodChannel = const MethodChannel('flutter_storm');
 
   @override
-  Future<int?> SFileOpenArchive(String mpqName, int mpqFlags) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileOpenArchive', {
+  Future<String?> SFileOpenArchive(String mpqName, int mpqFlags) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileOpenArchive', {
       'mpqName': mpqName,
       'mpqFlags': mpqFlags
     });
@@ -18,8 +18,8 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileCreateArchive', {
+  Future<String?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileCreateArchive', {
       'mpqName': mpqName,
       'mpqFlags': mpqFlags,
       'maxFileCount': maxFileCount
@@ -27,7 +27,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     return handle;
   }
 
-  Future<int?> SFileCloseArchive(int hMpq) async {
+  Future<int?> SFileCloseArchive(String hMpq) async {
     final handle = await methodChannel.invokeMethod<int>('SFileCloseArchive', {
       'hMpq': hMpq
     });
@@ -35,7 +35,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<bool?> SFileHasFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
+  Future<bool?> SFileHasFile(String hMpq, String fileName, int fileSize, int dwFlags) async {
     final handle = await methodChannel.invokeMethod<bool>('SFileHasFile', {
       'hMpq': hMpq,
       'fileName': fileName
@@ -44,8 +44,8 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileCreateFile', {
+  Future<String?> SFileCreateFile(String hMpq, String fileName, int fileSize, int dwFlags) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileCreateFile', {
       'hMpq': hMpq,
       'fileName': fileName,
       'fileSize': fileSize,
@@ -55,14 +55,14 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCloseFile(int hFile) async {
+  Future<int?> SFileCloseFile(String hFile) async {
     final handle = await methodChannel
         .invokeMethod<int>('SFileCloseFile', {'hFile': hFile});
     return handle;
   }
 
   @override
-  Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
+  Future<void> SFileWriteFile(String hFile, Uint8List pvData, int dwSize, int dwCompression) async {
     await methodChannel.invokeMethod<void>('SFileWriteFile', {
       'hFile': hFile,
       'pvData': pvData,
@@ -72,7 +72,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<void> SFileRemoveFile(int hMpq, String fileName) async {
+  Future<void> SFileRemoveFile(String hMpq, String fileName) async {
     await methodChannel.invokeMethod<int>('SFileRemoveFile', {
       'hMpq': hMpq,
       'fileName': fileName
@@ -80,7 +80,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) async {
+  Future<void> SFileRenameFile(String hMpq, String oldFileName, String newFileName) async {
     await methodChannel.invokeMethod<int>('SFileRenameFile', {
       'hMpq': hMpq,
       'oldFileName': oldFileName,
@@ -90,9 +90,52 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
 
 
   @override
-  Future<void> SFileFinishFile(int hFile) async {
+  Future<void> SFileFinishFile(String hFile) async {
     await methodChannel.invokeMethod<void>('SFileFinishFile', {
       'hFile': hFile
     });
+  }
+
+  @override
+  Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindFirstFile', {
+      'hMpq': hMpq,
+      'szMask': szMask,
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
+  }
+
+  @override
+  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<int>('SFileFindNextFile', {
+      'hFind': hFind,
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
+  }
+
+  @override
+  Future<int?> SFileFindClose(String hFind) async {
+    final handle = await methodChannel.invokeMethod<int>('SFileFindClose', {
+      'hFind': hFind
+    });
+    return handle;
+  }
+
+  // Custom Methods
+
+  @override
+  Future<String?> SFileFindCreateDataPointer() async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindCreateDataPointer');
+    return handle;
+  }
+
+  @override
+  Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindGetDataForDataPointer', {
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
   }
 }

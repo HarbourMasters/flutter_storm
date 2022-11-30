@@ -8,7 +8,8 @@
 #import "FLEStormPlugin.h"
 #include "../StormLib/src/StormLib.h"
 
-#include <vector>
+#include <unordered_map>
+#include <string>
 
 namespace {
 NSString *const kChannelName = @"flutter_storm";
@@ -22,7 +23,22 @@ NSString *const kFileCloseFile = @"SFileCloseFile";
 NSString *const kFileRemoveFile = @"SFileRemoveFile";
 NSString *const kFileRenameFile = @"SFileRenameFile";
 NSString *const kFileFinishFile = @"SFileFinishFile";
+NSString *const kFileFindFirstFile = @"SFileFindFirstFile";
+NSString *const kFileFindNextFile = @"SFileFindNextFile";
+NSString *const kFileFindClose = @"SFileFindClose";
+
+
+// Own additions
+NSString *const kFileFindCreateDataPointer = @"SFileFindCreateDataPointer";
+NSString *const kFileFindGetDataForDataPointer = @"SFileFindGetDataForDataPointer";
 }
+
+typedef  NS_ENUM(NSInteger, UUIDGenerationType) {
+    UUIDGenerationTypeHandle,
+    UUIDGenerationTypeFindData
+};
+
+#define METHOD(name) if ([call.method isEqualToString:name])
 
 @interface FLEStormPlugin ()
 @end
@@ -34,12 +50,12 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
   // A reference to the registrar holding the NSView used by the plugin. Holding a reference
   // since the view might be nil at the time the plugin is created.
   id<FlutterPluginRegistrar> _registrar;
-  
-  // Array to hold all open archives (void *)
-  std::vector<HANDLE> _archives;
 
-  // Array to hold all open files
-  std::vector<HANDLE> _files;
+  // A dictionary to hold all HANDLE
+  std::unordered_map<std::string, HANDLE> handles;
+
+  // A dictionary to hold all SFILE_FOIND_DATA
+  std::unordered_map<std::string, SFILE_FIND_DATA> findDataPointers;
 }
 
 + (void)registerWithRegistrar:(id<FlutterPluginRegistrar>)registrar {
@@ -66,7 +82,7 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     id methodResult = nil;
 
-    if ([call.method isEqualToString:kFileOpenArchive]) {
+    METHOD(kFileOpenArchive) {
         NSDictionary *args = call.arguments;
 
         NSString *mpqName = args[@"mpqName"];
@@ -75,12 +91,15 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
         HANDLE mpqHandle;
         bool success = SFileOpenArchive([mpqName UTF8String], [mpqFlags unsignedIntValue], 0, &mpqHandle);
         if (success) {
-            _archives.push_back(mpqHandle);
-            methodResult = [NSNumber numberWithUnsignedLongLong:(unsigned long long)mpqHandle];
+            NSString *uuid = [self generateUUIDForType:UUIDGenerationTypeHandle];
+            handles[uuid.UTF8String] = mpqHandle;
+            methodResult = uuid;
         } else {
-            methodResult = [NSNumber numberWithUnsignedLongLong:0];
+            methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
         }
-    } else if ([call.method isEqualToString:kFileCreateArchive]) {
+    }
+
+    METHOD(kFileCreateArchive) {
         NSDictionary *args = call.arguments;
 
         NSString *mpqName = args[@"mpqName"];
@@ -90,137 +109,273 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
         HANDLE mpqHandle;
         bool success = SFileCreateArchive([mpqName UTF8String], [mpqFlags unsignedIntValue], [maxFileCount unsignedIntValue], &mpqHandle);
         if (success) {
-            _archives.push_back(mpqHandle);
-            methodResult = [NSNumber numberWithUnsignedLongLong:(unsigned long long)_archives.size() - 1];
+            NSString *uuid = [self generateUUIDForType:UUIDGenerationTypeHandle];
+            handles[uuid.UTF8String] = mpqHandle;
+            methodResult = uuid;
         } else {
             methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
         }
-    } else if ([call.method isEqualToString:kFileCloseArchive]) {
-        NSDictionary *args = call.arguments;
-        NSNumber *mpqHandle = args[@"hMpq"];
+    }
 
-        // check mpqHandle is valid
-        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+    METHOD(kFileCloseArchive) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
+
+        // check if handle is valid
+        if (handle == NULL) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            bool success = SFileCloseArchive(_archives[[mpqHandle unsignedLongLongValue]]);
+            bool success = SFileCloseArchive(handle);
             if (success) {
-                _archives.erase(_archives.begin() + [mpqHandle unsignedLongLongValue]);
+                handles.erase([mpqHandle UTF8String]);
                 methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
             }
         }
-    } else if ([call.method isEqualToString:kFileHasFile]) {
+    }
+
+    METHOD(kFileHasFile) {
         NSDictionary *args = call.arguments;
-        NSNumber *mpqHandle = args[@"hMpq"];
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
         NSString *fileName = args[@"fileName"];
 
-        // check mpqHandle is valid
-        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+        // check if handle is valid
+        if (handle == NULL) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            bool success = SFileHasFile(_archives[[mpqHandle unsignedLongLongValue]], [fileName UTF8String]);
+            bool success = SFileHasFile(handle, [fileName UTF8String]);
             if (success) {
                 methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
             }
         }
-    } else if ([call.method isEqualToString:kFileCreateFile]) {
+    }
+
+    METHOD(kFileCreateFile) {
         NSDictionary *args = call.arguments;
-        NSNumber *mpqHandle = args[@"hMpq"];
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
         NSString *fileName = args[@"fileName"];
         NSNumber *fileSize = args[@"fileSize"];
         NSNumber *dwFlags = args[@"dwFlags"];
 
-        // check mpqHandle is valid
-        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+        // check if handle is valid
+        if (handle == NULL) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
             HANDLE fileHandle;
             time_t theTime;
             time(&theTime);
-            bool success = SFileCreateFile(_archives[[mpqHandle unsignedLongLongValue]], [fileName UTF8String], theTime, [fileSize unsignedIntValue], 0, [dwFlags unsignedIntValue], &fileHandle);
+            bool success = SFileCreateFile(handle, [fileName UTF8String], theTime, [fileSize unsignedIntValue], 0, [dwFlags unsignedIntValue], &fileHandle);
             if (success) {
-                _files.push_back(fileHandle);
-                methodResult = [NSNumber numberWithUnsignedLongLong:(unsigned long long)_files.size() - 1];
+                NSString *uuid = [self generateUUIDForType:UUIDGenerationTypeHandle];
+                handles[uuid.UTF8String] = fileHandle;
+                methodResult = uuid;
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
             }
         }
-    } else if ([call.method isEqualToString:kFileWriteFile]) {
+    }
+
+    METHOD(kFileWriteFile) {
         NSDictionary *args = call.arguments;
-        NSNumber *fileHandle = args[@"hFile"];
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = handles[[fileHandle UTF8String]];
         FlutterStandardTypedData *data = args[@"pvData"];
         NSNumber *dwSize = args[@"dwSize"];
         NSNumber *dwCompression = args[@"dwCompression"];
 
-        bool success = SFileWriteFile(_files[[fileHandle unsignedLongLongValue]], [[data data] bytes], [dwSize unsignedIntValue], [dwCompression unsignedIntValue]);
-        if (success) {
-            methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
-        } else {
-            methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
-        }
-    } else if ([call.method isEqualToString:kFileCloseFile]) {
-        NSDictionary *args = call.arguments;
-        NSNumber *fileHandle = args[@"hMpq"];
-
-        bool success = SFileCloseFile(_files[[fileHandle unsignedLongLongValue]]);
-        if (success) {
-            _files.erase(_files.begin() + [fileHandle unsignedLongLongValue]);
-            methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
-        } else {
-            methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
-        }
-    } else if ([call.method isEqualToString:kFileRemoveFile]) {
-        NSDictionary *args = call.arguments;
-        NSNumber *mpqHandle = args[@"hMpq"];
-        NSString *fileName = args[@"fileName"];
-
-        // check mpqHandle is valid
-        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+        if (handle == NULL) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            bool success = SFileRemoveFile(_archives[[mpqHandle unsignedLongLongValue]], [fileName UTF8String], 0);
+            bool success = SFileWriteFile(handle, [[data data] bytes], [dwSize unsignedIntValue], [dwCompression unsignedIntValue]);
             if (success) {
                 methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
             }
         }
-    } else if ([call.method isEqualToString:kFileRenameFile]) {
+    }
+
+    METHOD(kFileCloseFile) {
         NSDictionary *args = call.arguments;
-        NSNumber *mpqHandle = args[@"hMpq"];
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = handles[[fileHandle UTF8String]];
+
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            bool success = SFileCloseFile(handle);
+            if (success) {
+                handles.erase([fileHandle UTF8String]);
+                methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+        }
+    }
+
+    METHOD(kFileRemoveFile) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
+        NSString *fileName = args[@"fileName"];
+
+        // check if handle is valid
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            bool success = SFileRemoveFile(handle, [fileName UTF8String], 0);
+            if (success) {
+                methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+        }
+    }
+
+    METHOD(kFileRenameFile) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
         NSString *oldFileName = args[@"oldFileName"];
         NSString *newFileName = args[@"newFileName"];
 
-        // check mpqHandle is valid
-        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+        // check if handle is valid
+        if (handle == NULL) {
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            bool success = SFileRenameFile(_archives[[mpqHandle unsignedLongLongValue]], [oldFileName UTF8String], [newFileName UTF8String]);
+            bool success = SFileRenameFile(handle, [oldFileName UTF8String], [newFileName UTF8String]);
             if (success) {
                 methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
             }
         }
-    } else if ([call.method isEqualToString:kFileFinishFile]) {
-        NSDictionary *args = call.arguments;
-        NSNumber *fileHandle = args[@"hFile"];
+    }
 
-        bool success = SFileFinishFile(_files[[fileHandle unsignedLongLongValue]]);
-        if (success) {
-            methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+    METHOD(kFileFinishFile) {
+        NSDictionary *args = call.arguments;
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = handles[[fileHandle UTF8String]];
+
+        // check if handle is valid
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
         } else {
-            methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            bool success = SFileFinishFile(handle);
+            if (success) {
+                methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
         }
-    } else {
+    }
+
+    METHOD(kFileFindFirstFile) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = handles[[mpqHandle UTF8String]];
+        NSString *searchMask = args[@"szMask"];
+        NSString *findFileData = args[@"lpFindFileData"];
+        SFILE_FIND_DATA *findData = &findDataPointers[[findFileData UTF8String]];
+
+        // check if handle is valid
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            HANDLE findHandle = SFileFindFirstFile(handle, [searchMask UTF8String], findData, NULL);
+            if (findHandle != NULL) {
+                NSString *uuid = [self generateUUIDForType:UUIDGenerationTypeHandle];
+                handles[uuid.UTF8String] = findHandle;
+                methodResult = uuid;
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+        }
+    }
+
+    METHOD(kFileFindNextFile) {
+        NSDictionary *args = call.arguments;
+        NSString *findHandle = args[@"hFind"];
+        HANDLE handle = handles[[findHandle UTF8String]];
+        NSString *findFileData = args[@"lpFindFileData"];
+        SFILE_FIND_DATA *findData = &findDataPointers[[findFileData UTF8String]];
+
+        // check if handle is valid
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            bool success = SFileFindNextFile(handle, findData);
+            if (success) {
+                methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+        }
+    }
+
+    METHOD(kFileFindClose) {
+        NSDictionary *args = call.arguments;
+        NSString *findHandle = args[@"hFind"];
+        HANDLE handle = handles[[findHandle UTF8String]];
+
+        // check if handle is valid
+        if (handle == NULL) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            bool success = SFileFindClose(handle);
+            if (success) {
+                methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
+        }
+    }
+
+    // Custom additions
+    METHOD(kFileFindCreateDataPointer) {
+        SFILE_FIND_DATA findData = {};
+        NSString *uuid = [self generateUUIDForType:UUIDGenerationTypeFindData];
+        findDataPointers[uuid.UTF8String] = findData;
+        methodResult = uuid;
+    }
+
+    METHOD(kFileFindGetDataForDataPointer) {
+        NSDictionary *args = call.arguments;
+        NSString *findFileData = args[@"lpFindFileData"];
+        SFILE_FIND_DATA findData = findDataPointers[[findFileData UTF8String]];
+        methodResult = [NSString stringWithUTF8String:findData.cFileName];
+    }
+
+    if (methodResult == NULL) {
         methodResult = FlutterMethodNotImplemented;
     }
 
     result(methodResult);
+}
+
+// MARK: - Helpers
+
+/// Generates a unique UUID that is not already present in the relevant lookup table
+- (NSString *)generateUUIDForType:(UUIDGenerationType)generationType {
+    NSString *uuid = [[NSUUID UUID] UUIDString];
+
+    if (generationType == UUIDGenerationTypeHandle) {
+        while (handles.find([uuid UTF8String]) != handles.end()) {
+            uuid = [[NSUUID UUID] UUIDString];
+        }
+    } else if (generationType == UUIDGenerationTypeFindData) {
+        while (findDataPointers.find([uuid UTF8String]) != findDataPointers.end()) {
+            uuid = [[NSUUID UUID] UUIDString];
+        }
+    }
+    
+    return uuid;
 }
 
 @end

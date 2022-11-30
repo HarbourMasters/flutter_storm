@@ -20,43 +20,65 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throw UnimplementedError('throwUnimplemented() has not been implemented.');
   }
 
-  Future<int?> SFileOpenArchive(String mpqName, int mpqFlags) async {
+  Future<String?> SFileOpenArchive(String mpqName, int mpqFlags) async {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
+  Future<String?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) async {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCloseArchive(int hMpq) async {
+  Future<int?> SFileCloseArchive(String hMpq) async {
     throwUnimplemented();
   }
 
-  Future<bool?> SFileHasFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
+  Future<bool?> SFileHasFile(String hMpq, String fileName, int fileSize, int dwFlags) async {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlags) async {
+  Future<String?> SFileCreateFile(String hMpq, String fileName, int fileSize, int dwFlags) async {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCloseFile(int hFile) async {
+  Future<int?> SFileCloseFile(String hFile) async {
     throwUnimplemented();
   }
 
-  Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) async {
+  Future<void> SFileWriteFile(String hFile, Uint8List pvData, int dwSize, int dwCompression) async {
     throwUnimplemented();
   }
 
-  Future<void> SFileRemoveFile(int hMpq, String fileName) async {
+  Future<void> SFileRemoveFile(String hMpq, String fileName) async {
     throwUnimplemented();
   }
 
-  Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) async {
+  Future<void> SFileRenameFile(String hMpq, String oldFileName, String newFileName) async {
     throwUnimplemented();
   }
 
-  Future<void> SFileFinishFile(int hFile) async {
+  Future<void> SFileFinishFile(String hFile) async {
+    throwUnimplemented();
+  }
+
+  Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) async {
+    throwUnimplemented();
+  }
+
+  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+    throwUnimplemented();
+  }
+
+  Future<int?> SFileFindClose(String hFind) async {
+    throwUnimplemented();
+  }
+
+  // Custom Methods
+
+  Future<String?> SFileFindCreateDataPointer() async {
+    throwUnimplemented();
+  }
+
+  Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) async {
     throwUnimplemented();
   }
 }
