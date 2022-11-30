@@ -40,3 +40,25 @@ Future<void> SFileRenameFile(String hMpq, String oldFileName, String newFileName
 Future<void> SFileFinishFile(String hFile) async {
   return FlutterStormPlatform.instance.SFileFinishFile(hFile);
 }
+
+Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) async {
+  return FlutterStormPlatform.instance.SFileFindFirstFile(hMpq, szMask, lpFindFileData);
+}
+
+Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+  return FlutterStormPlatform.instance.SFileFindNextFile(hFind, lpFindFileData);
+}
+
+Future<int?> SFileFindClose(String hFind) async {
+  return FlutterStormPlatform.instance.SFileFindClose(hFind);
+}
+
+// Custom Methods
+
+Future<String?> SFileFindCreateDataPointer() async {
+  return FlutterStormPlatform.instance.SFileFindCreateDataPointer();
+}
+
+Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) async {
+  return FlutterStormPlatform.instance.SFileFindGetDataForDataPointer(lpFindFileData);
+}

@@ -59,4 +59,26 @@ abstract class FlutterStormPlatform extends PlatformInterface {
   Future<void> SFileFinishFile(String hFile) async {
     throwUnimplemented();
   }
+
+  Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) async {
+    throwUnimplemented();
+  }
+
+  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+    throwUnimplemented();
+  }
+
+  Future<int?> SFileFindClose(String hFind) async {
+    throwUnimplemented();
+  }
+
+  // Custom Methods
+
+  Future<String?> SFileFindCreateDataPointer() async {
+    throwUnimplemented();
+  }
+
+  Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) async {
+    throwUnimplemented();
+  }
 }

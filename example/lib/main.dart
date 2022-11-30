@@ -23,13 +23,47 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    writeDemoFile();
+    displayOTRContents();
   }
 
   Future<void> displayOTRContents() async {
-    String? mpqHandle = await SFileOpenArchive("/Users/dcvz/Downloads/generated.otr",  MPQ_OPEN_READ_ONLY);
+    String? mpqHandle = await SFileOpenArchive(
+        "/Users/dcvz/Downloads/generated.otr", MPQ_OPEN_READ_ONLY);
 
+    if (mpqHandle == null) {
+      print("Failed to open archive");
+      return;
+    }
 
+    String? findData = await SFileFindCreateDataPointer();
+    if (findData == null) {
+      print("Failed to create find data");
+      return;
+    }
+
+    String? hFind = await SFileFindFirstFile(mpqHandle, "*", findData);
+    if (hFind == null) {
+      print("Failed to find first file");
+      return;
+    }
+
+    bool fileFound = false;
+    List<String> files = [];
+
+    do {
+      fileFound = await SFileFindNextFile(hFind, findData) == 0;
+      if (fileFound) {
+        print("Found file!");
+        String? fileName = await SFileFindGetDataForDataPointer(findData);
+        print(fileName);
+        if (fileName != null && fileName != "(signature)") {
+          files.add(fileName);
+        }
+      } else if (!fileFound /*&& GetLastError() != ERROR_NO_MORE_FILES*/) {}
+    } while (fileFound);
+
+    SFileFindClose(hFind);
+    print(files);
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

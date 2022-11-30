@@ -95,4 +95,47 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
       'hFile': hFile
     });
   }
+
+  @override
+  Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindFirstFile', {
+      'hMpq': hMpq,
+      'szMask': szMask,
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
+  }
+
+  @override
+  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<int>('SFileFindNextFile', {
+      'hFind': hFind,
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
+  }
+
+  @override
+  Future<int?> SFileFindClose(String hFind) async {
+    final handle = await methodChannel.invokeMethod<int>('SFileFindClose', {
+      'hFind': hFind
+    });
+    return handle;
+  }
+
+  // Custom Methods
+
+  @override
+  Future<String?> SFileFindCreateDataPointer() async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindCreateDataPointer');
+    return handle;
+  }
+
+  @override
+  Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) async {
+    final handle = await methodChannel.invokeMethod<String>('SFileFindGetDataForDataPointer', {
+      'lpFindFileData': lpFindFileData
+    });
+    return handle;
+  }
 }
