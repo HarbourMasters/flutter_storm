@@ -330,6 +330,7 @@ typedef  NS_ENUM(NSInteger, UUIDGenerationType) {
         } else {
             bool success = SFileFindClose(handle);
             if (success) {
+                handles.erase([findHandle UTF8String]);
                 methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
             } else {
                 methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];

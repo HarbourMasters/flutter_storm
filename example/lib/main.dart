@@ -15,8 +15,8 @@ import 'package:url_launcher/url_launcher.dart';
 late PackageInfo packageInfo;
 
 void main() async {
-  packageInfo = await PackageInfo.fromPlatform();
   WidgetsFlutterBinding.ensureInitialized();
+  packageInfo = await PackageInfo.fromPlatform();
   runApp(
     const MaterialApp(
       home: MyApp()
