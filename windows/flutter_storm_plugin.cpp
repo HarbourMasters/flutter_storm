@@ -334,6 +334,32 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileListArchive") {
+            // List all files present in the given archive
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+
+            ASSERT(hMpq);
+
+            std::vector<std::string> files;
+            
+            HANDLE hFind = SFileFindFirstFile(mpqInstances.at(*hMpq), "*", NULL, NULL);
+            if (hFind != NULL) {
+                do {
+                    char szFileName[MAX_PATH];
+                    if (SFileGetFileName(hFind, szFileName)) {
+                        files.push_back(szFileName);
+                    }
+                } while (SFileFindNextFile(hFind));
+                SFileFindClose(hFind);
+            }
+
+            result->Success(flutter::EncodableValue(files));
+            return;
+        }
+
         result->NotImplemented();
     }
 }

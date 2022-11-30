@@ -22,6 +22,8 @@ NSString *const kFileCloseFile = @"SFileCloseFile";
 NSString *const kFileRemoveFile = @"SFileRemoveFile";
 NSString *const kFileRenameFile = @"SFileRenameFile";
 NSString *const kFileFinishFile = @"SFileFinishFile";
+
+NSString *const kFileListArchive = @"SFileListArchive";
 }
 
 @interface FLEStormPlugin ()
@@ -215,6 +217,29 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
             methodResult = [NSNumber numberWithUnsignedInt:ERROR_SUCCESS];
         } else {
             methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+        }
+    } else if ([call.method isEqualToString:kFileListArchive]) {
+        NSDictionary *args = call.arguments;
+        NSNumber *mpqHandle = args[@"hMpq"];
+
+        // check mpqHandle is valid
+        if ([mpqHandle unsignedLongLongValue] >= _archives.size()) {
+            methodResult = [NSNumber numberWithUnsignedInt:ERROR_INVALID_HANDLE];
+        } else {
+            HANDLE hFind = SFileFindFirstFile(_archives[[mpqHandle unsignedLongLongValue]], "*", NULL, NULL);
+            if (hFind != NULL) {
+                NSMutableArray *fileList = [[NSMutableArray alloc] init];
+                do {
+                    char szFileName[MAX_PATH];
+                    if (SFileGetFileName(hFind, szFileName)) {
+                        [fileList addObject:[NSString stringWithUTF8String:szFileName]];
+                    }
+                } while (SFileFindNextFile(hFind));
+                SFileFindClose(hFind);
+                methodResult = fileList;
+            } else {
+                methodResult = [NSNumber numberWithUnsignedInt:GetLastError()];
+            }
         }
     } else {
         methodResult = FlutterMethodNotImplemented;
