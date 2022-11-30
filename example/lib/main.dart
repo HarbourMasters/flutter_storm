@@ -26,19 +26,25 @@ class _MyAppState extends State<MyApp> {
     writeDemoFile();
   }
 
+  Future<void> displayOTRContents() async {
+    String? mpqHandle = await SFileOpenArchive("/Users/dcvz/Downloads/generated.otr",  MPQ_OPEN_READ_ONLY);
+
+
+  }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> writeDemoFile() async {
-    int? mpqHandle = await SFileCreateArchive(
-        "I:\\Demo.mpq", MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4, 1024);
+    String? mpqHandle = await SFileCreateArchive(
+        "/Users/dcvz/Github/flutter_storm/Demo.mpq",
+        MPQ_CREATE_SIGNATURE | MPQ_CREATE_ARCHIVE_V4,
+        1024);
 
-    File data = File("C:\\Users\\Ruine\\3D Objects\\lewd.png");
+    File data = File("/Users/dcvz/Downloads/accessibility_text_eng.xml");
 
-    int? fileHandle = await SFileCreateFile(
+    String? fileHandle = await SFileCreateFile(
         mpqHandle!, "DemoFile.uwu", data.lengthSync(), MPQ_FILE_COMPRESS);
     await SFileWriteFile(fileHandle!, data.readAsBytesSync(), data.lengthSync(),
         MPQ_COMPRESSION_ZLIB);
-    await SFileFinishFile(fileHandle);
-    await SFileCloseArchive(mpqHandle);
 
     if (!mounted) return;
 

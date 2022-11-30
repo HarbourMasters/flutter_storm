@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "StormLib.h"
 
@@ -21,8 +22,7 @@ using namespace flutter;
                         return;                                              \
                     }                                                        \
 
-std::vector<HANDLE> mpqInstances;
-std::vector<HANDLE> fileInstances;
+std::unordered_map<std::string, HANDLE> handles;
 
 const EncodableValue* ValueOrNull(const EncodableMap & map, const char* key) {
     auto it = map.find(EncodableValue(key));
@@ -76,6 +76,14 @@ std::optional<std::vector<uint8_t>> GetU8ListOrNull(const EncodableMap& map, con
     return *list;
 }
 
+std::string GenerateUUID() {
+    std::string uuid = "";
+    do {
+        uuid = std::to_string(rand());
+    } while (handles.find(uuid) != handles.end());
+    return uuid;
+}
+
 namespace flutter_storm {
 
     FlutterStormPlugin::FlutterStormPlugin(){}
@@ -117,8 +125,9 @@ namespace flutter_storm {
             bool rs = SFileOpenArchive(wName.c_str(), 0, *mpqFlags, &mpqFile);
 
             if (rs) {
-                result->Success(flutter::EncodableValue((int)mpqInstances.size()));
-                mpqInstances.push_back(mpqFile);
+                std::string uuid = GenerateUUID();
+                handles[uuid] = mpqFile;
+                result->Success(EncodableValue(uuid));
                 return;
             }
 
@@ -144,8 +153,9 @@ namespace flutter_storm {
             bool rs = SFileCreateArchive(wName.c_str(), *mpqFlags, *maxFileCount, &mpqFile);
 
             if (rs) {
-                result->Success(flutter::EncodableValue((int) mpqInstances.size()));
-                mpqInstances.push_back(mpqFile);
+                std::string uuid = GenerateUUID();
+                handles[uuid] = mpqFile;
+                result->Success(EncodableValue(uuid));
                 return;
             }
 
@@ -157,19 +167,21 @@ namespace flutter_storm {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
-            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto hMpq = GetStringOrNull(*arguments, "hMpq");
+            HANDLE handle = handles[*hMpq];
             ASSERT(hMpq);
 
-            // if ((*hMpq) < 0 || mpqInstances.size() > (*hMpq) || mpqInstances.at(*hMpq) == nullptr) {
-            //    result->Error("storm_error", "The specified mpq handle does not exists");
-            //    return;
-            // }
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
 
-            bool rs = SFileCloseArchive(mpqInstances.at(*hMpq));
+            bool rs = SFileCloseArchive(handle);
 
             if (rs) {
-                result->Success(flutter::EncodableValue((int)mpqInstances.size()));
-                mpqInstances.erase(mpqInstances.begin() + *hMpq);
+                handles.erase(*hMpq);
+                result->Success();
                 return;
             }
 
@@ -181,14 +193,20 @@ namespace flutter_storm {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
-            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto hMpq = GetStringOrNull(*arguments, "hMpq");
+            HANDLE handle = handles[*hMpq];
             auto fileName = GetStringOrNull(*arguments, "fileName");
 
             ASSERT(hMpq);
             ASSERT(fileName);
 
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
 
-            bool rs = SFileHasFile(mpqInstances.at(*hMpq), (*fileName).c_str());
+            bool rs = SFileHasFile(handle, (*fileName).c_str());
             result->Success(flutter::EncodableValue(rs));
 
             return;
@@ -198,7 +216,8 @@ namespace flutter_storm {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
-            auto hMpq     = GetInt64ValueOrNull(*arguments, "hMpq");
+            auto hMpq     = GetStringOrNull(*arguments, "hMpq");
+            HANDLE handle = handles[*hMpq];
             auto fileName = GetStringOrNull(*arguments, "fileName");
             auto fileSize = GetInt64ValueOrNull(*arguments, "fileSize");
             auto dwFlags  = GetInt64ValueOrNull(*arguments, "dwFlags");
@@ -208,6 +227,12 @@ namespace flutter_storm {
             ASSERT(fileSize);
             ASSERT(dwFlags);
 
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
             SYSTEMTIME sysTime;
             GetSystemTime(&sysTime);
             FILETIME t;
@@ -215,11 +240,12 @@ namespace flutter_storm {
             ULONGLONG stupidHack = static_cast<uint64_t>(t.dwHighDateTime) << (sizeof(t.dwHighDateTime) * 8) | t.dwLowDateTime;
 
             HANDLE hFile;
-            bool rs = SFileCreateFile(mpqInstances.at(*hMpq), (*fileName).c_str(), stupidHack, *fileSize, 0, *dwFlags, &hFile);
+            bool rs = SFileCreateFile(handle, (*fileName).c_str(), stupidHack, *fileSize, 0, *dwFlags, &hFile);
 
             if (rs) {
-                result->Success(flutter::EncodableValue((int)fileInstances.size()));
-                fileInstances.push_back(hFile);
+                std::string uuid = GenerateUUID();
+                handles[uuid] = hFile;
+                result->Success(EncodableValue(uuid));
                 return;
             }
 
@@ -231,14 +257,21 @@ namespace flutter_storm {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
-            auto hFile = GetInt64ValueOrNull(*arguments, "hFile");
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            HANDLE handle = handles[*hFile];
             ASSERT(hFile);
 
-            bool rs = SFileCloseFile(fileInstances.at(*hFile));
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
+            bool rs = SFileCloseFile(handle);
 
             if (rs) {
-                result->Success(flutter::EncodableValue((int)fileInstances.size()));
-                fileInstances.erase(fileInstances.begin() + *hFile);
+                handles.erase(*hFile);
+                result->Success();
                 return;
             }
 
@@ -250,7 +283,8 @@ namespace flutter_storm {
             const auto* arguments =
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
-            auto hFile = GetInt64ValueOrNull(*arguments, "hFile");
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            HANDLE handle = handles[*hFile];
             auto pvData = GetU8ListOrNull(*arguments, "pvData");
             auto dwSize = GetInt64ValueOrNull(*arguments, "dwSize");
             auto dwCompression = GetInt64ValueOrNull(*arguments, "dwCompression");
@@ -260,7 +294,13 @@ namespace flutter_storm {
             ASSERT(dwSize);
             ASSERT(dwCompression);
 
-            bool rs = SFileWriteFile(fileInstances.at(*hFile), (*pvData).data(), *dwSize, *dwCompression);
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
+            bool rs = SFileWriteFile(handle, (*pvData).data(), *dwSize, *dwCompression);
 
             if (rs) {
                 result->Success();
@@ -276,12 +316,19 @@ namespace flutter_storm {
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
             auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            HANDLE handle = handles[*hMpq];
             auto fileName = GetStringOrNull(*arguments, "fileName");
 
             ASSERT(hMpq);
             ASSERT(fileName);
 
-            bool rs = SFileRemoveFile(mpqInstances.at(*hMpq), (*fileName).c_str(), 0);
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
+            bool rs = SFileRemoveFile(handle, (*fileName).c_str(), 0);
 
             if (rs) {
                 result->Success();
@@ -297,6 +344,7 @@ namespace flutter_storm {
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
             auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
+            HANDLE handle = handles[*hMpq];
             auto oldFileName = GetStringOrNull(*arguments, "oldFileName");
             auto newFileName = GetStringOrNull(*arguments, "newFileName");
 
@@ -304,7 +352,13 @@ namespace flutter_storm {
             ASSERT(oldFileName);
             ASSERT(newFileName);
 
-            bool rs = SFileRenameFile(mpqInstances.at(*hMpq), (*oldFileName).c_str(), (*newFileName).c_str());
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
+            bool rs = SFileRenameFile(handle, (*oldFileName).c_str(), (*newFileName).c_str());
 
             if (rs) {
                 result->Success();
@@ -320,10 +374,17 @@ namespace flutter_storm {
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
             auto hFile = GetInt64ValueOrNull(*arguments, "hFile");
+            HANDLE handle = handles[*hFile];
 
             ASSERT(hFile);
 
-            bool rs = SFileFinishFile(fileInstances.at(*hFile));
+            // check if handle is valid
+            if (handle == NULL) {
+                result->Error("storm_error", "Invalid handle");
+                return;
+            }
+
+            bool rs = SFileFinishFile(handle);
 
             if (rs) {
                 result->Success();
@@ -331,32 +392,6 @@ namespace flutter_storm {
             }
 
             result->Error("storm_error", "Failed to finish file [" + std::to_string(GetLastError()) + "]");
-            return;
-        }
-
-        METHOD("SFileListArchive") {
-            // List all files present in the given archive
-            const auto* arguments =
-                std::get_if<flutter::EncodableMap>(method_call.arguments());
-
-            auto hMpq = GetInt64ValueOrNull(*arguments, "hMpq");
-
-            ASSERT(hMpq);
-
-            std::vector<std::string> files;
-            
-            HANDLE hFind = SFileFindFirstFile(mpqInstances.at(*hMpq), "*", NULL, NULL);
-            if (hFind != NULL) {
-                do {
-                    char szFileName[MAX_PATH];
-                    if (SFileGetFileName(hFind, szFileName)) {
-                        files.push_back(szFileName);
-                    }
-                } while (SFileFindNextFile(hFind));
-                SFileFindClose(hFind);
-            }
-
-            result->Success(flutter::EncodableValue(files));
             return;
         }
 

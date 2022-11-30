@@ -10,6 +10,7 @@
 #include <vector>
 #include <optional>
 #include <variant>
+#include <unordered_map>
 
 #include "StormLib.h"
 
@@ -29,8 +30,7 @@
 #define SUCCESS_ARG(data, type) response = FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_##type(data)))
 #define ERROR(error) response = FL_METHOD_RESPONSE(fl_method_error_response_new("storm_error", (error).c_str(), nullptr))
 
-std::vector<HANDLE> mpqInstances;
-std::vector<HANDLE> fileInstances;
+std::unordered_map<std::string, HANDLE> handles;
 
 struct _FlutterStormPlugin {
   GObject parent_instance;
