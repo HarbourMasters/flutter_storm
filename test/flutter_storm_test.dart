@@ -14,55 +14,91 @@ class MockFlutterStormPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<int?> SFileCloseArchive(int hMpq) {
+  Future<int?> SFileCloseArchive(String hMpq) {
     // TODO: implement SFileCloseArchive
     throw UnimplementedError();
   }
 
   @override
-  Future<int?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) {
+  Future<int?> SFileCloseFile(String hFile) {
+    // TODO: implement SFileCloseFile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCount) {
     // TODO: implement SFileCreateArchive
     throw UnimplementedError();
   }
 
   @override
-  Future<int?> SFileCreateFile(int hMpq, String fileName, int fileSize, int dwFlags) {
+  Future<String?> SFileCreateFile(String hMpq, String fileName, int fileSize, int dwFlags) {
     // TODO: implement SFileCreateFile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> SFileFinishFile(int hFile) {
+  Future<int?> SFileFindClose(String hFind) {
+    // TODO: implement SFileFindClose
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> SFileFindCreateDataPointer() {
+    // TODO: implement SFileFindCreateDataPointer
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFileData) {
+    // TODO: implement SFileFindFirstFile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> SFileFindGetDataForDataPointer(String lpFindFileData) {
+    // TODO: implement SFileFindGetDataForDataPointer
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) {
+    // TODO: implement SFileFindNextFile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> SFileFinishFile(String hFile) {
     // TODO: implement SFileFinishFile
     throw UnimplementedError();
   }
 
   @override
-  Future<bool?> SFileHasFile(int hMpq, String fileName, int fileSize, int dwFlags) {
+  Future<bool?> SFileHasFile(String hMpq, String fileName, int fileSize, int dwFlags) {
     // TODO: implement SFileHasFile
     throw UnimplementedError();
   }
 
   @override
-  Future<int?> SFileOpenArchive(String mpqName, int mpqFlags) {
+  Future<String?> SFileOpenArchive(String mpqName, int mpqFlags) {
     // TODO: implement SFileOpenArchive
     throw UnimplementedError();
   }
 
   @override
-  Future<void> SFileRemoveFile(int hMpq, String fileName) {
+  Future<void> SFileRemoveFile(String hMpq, String fileName) {
     // TODO: implement SFileRemoveFile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> SFileRenameFile(int hMpq, String oldFileName, String newFileName) {
+  Future<void> SFileRenameFile(String hMpq, String oldFileName, String newFileName) {
     // TODO: implement SFileRenameFile
     throw UnimplementedError();
   }
 
   @override
-  Future<void> SFileWriteFile(int hFile, Uint8List pvData, int dwSize, int dwCompression) {
+  Future<void> SFileWriteFile(String hFile, Uint8List pvData, int dwSize, int dwCompression) {
     // TODO: implement SFileWriteFile
     throw UnimplementedError();
   }
@@ -71,6 +107,7 @@ class MockFlutterStormPlatform
   void throwUnimplemented() {
     // TODO: implement throwUnimplemented
   }
+
 }
 
 void main() {

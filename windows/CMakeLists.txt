@@ -69,7 +69,7 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin
-  ${stormlib_BINARY_DIR}/StormLib )
+  ${stormlib_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/StormLib.lib )
 
 target_compile_options(${PLUGIN_NAME}
   PRIVATE "/wd4101;/wd4267;/wd4334;/wd4244"
