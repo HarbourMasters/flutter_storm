@@ -91,6 +91,45 @@ std::string GenerateUUID() {
     return uuidStr;
 }
 
+std::string MPQErrorString(DWORD error) {
+    switch (error) {
+        case ERROR_SUCCESS:
+            return "The operation completed successfully.";
+        case ERROR_FILE_NOT_FOUND:
+            return "The system cannot find the file specified.";
+        case ERROR_ACCESS_DENIED:
+            return "Access is denied.";
+        case ERROR_INVALID_HANDLE:
+            return "The handle is invalid.";
+        case ERROR_NOT_ENOUGH_MEMORY:
+            return "Not enough storage is available to process this command.";
+        case ERROR_NOT_SUPPORTED:
+            return "The request is not supported.";
+        case ERROR_INVALID_PARAMETER:
+            return "One of the parameters is incorrect.";
+        case ERROR_NEGATIVE_SEEK:
+            return "An attempt was made to move the file pointer before the beginning of the file.";
+        case ERROR_DISK_FULL:
+            return "There is not enough space on the disk.";
+        case ERROR_ALREADY_EXISTS:
+            return "Cannot create a file when that file already exists.";
+        case ERROR_INSUFFICIENT_BUFFER:
+            return "The data area passed to a system call is too small.";
+        case  ERROR_BAD_FORMAT:
+            return "The .mpq archive is corrupt.";
+        case ERROR_NO_MORE_FILES:
+            return "No more files were found.";
+        case ERROR_HANDLE_EOF:
+            return "Reached the end of the file.";
+        case ERROR_CAN_NOT_COMPLETE:
+            return "Cannot complete this function.";
+        case ERROR_FILE_CORRUPT:
+            return "The file or directory is corrupted and unreadable.";
+    }
+}
+
+#define FAIL_WITH_ERROR(error) result->Error(std::to_string(error), MPQErrorString(GetLastError()));
+
 namespace flutter_storm {
 
     FlutterStormPlugin::FlutterStormPlugin(){}
@@ -138,7 +177,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to open MPQ [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -166,7 +205,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to create MPQ [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -180,7 +219,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hMpq)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -194,7 +233,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to create MPQ [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -211,15 +250,14 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hMpq)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
             HANDLE handle = handles[*hMpq];
 
             bool rs = SFileHasFile(handle, (*fileName).c_str());
-            result->Success(flutter::EncodableValue(rs));
-
+            result->Success(EncodableValue(true));
             return;
         }
 
@@ -240,7 +278,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hMpq)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -262,7 +300,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to create file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -276,7 +314,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hFile)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -291,7 +329,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to close file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -312,7 +350,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hFile)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -325,7 +363,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to write file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -342,7 +380,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hMpq)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -355,7 +393,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to remove file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -374,7 +412,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hMpq)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -388,7 +426,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to rename file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -402,7 +440,7 @@ namespace flutter_storm {
             // check if handle is valid
 
             if (!HAS_HANDLE(*hFile)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -416,7 +454,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to finish file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -433,7 +471,7 @@ namespace flutter_storm {
 
             // check if handle is valid
             if (!HAS_HANDLE(*hMpq) || !HAS_FILE_PTR(*lpFindFileData)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -449,7 +487,7 @@ namespace flutter_storm {
                 return;
             }
 
-            result->Error("storm_error", "Failed to find first file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -464,7 +502,7 @@ namespace flutter_storm {
 
             // check if handle is valid
             if (!HAS_HANDLE(*hFind) || !HAS_FILE_PTR(*lpFindFileData)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -472,7 +510,13 @@ namespace flutter_storm {
 
             HANDLE handle = handles[*hFind];
             bool rs = SFileFindNextFile(handle, findData);
-            result->Success(EncodableValue(rs ? 0 : (int)GetLastError()));
+            
+            if (rs) {
+                result->Success();
+                return;
+            }
+            
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -485,7 +529,7 @@ namespace flutter_storm {
 
             // check if handle is valid
             if (!HAS_HANDLE(*hFind)) {
-                result->Error("storm_error", "Invalid handle");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 
@@ -498,8 +542,7 @@ namespace flutter_storm {
                 return;
             }
 
-
-            result->Error("storm_error", "Failed to find next file [" + std::to_string(GetLastError()) + "]");
+            FAIL_WITH_ERROR(GetLastError());
             return;
         }
 
@@ -520,7 +563,7 @@ namespace flutter_storm {
 
             // check if handle is valid
             if (!HAS_FILE_PTR(*lpFindFileData)) {
-                result->Error("storm_error", "Invalid file pointer");
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
                 return;
             }
 

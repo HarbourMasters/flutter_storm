@@ -80,13 +80,19 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     bool fileFound = false;
 
     do {
-      fileFound = await SFileFindNextFile(hFind, findData) == 0;
-      if (fileFound) {
+      try {
+        await SFileFindNextFile(hFind, findData);
+        fileFound = true;
         String? fileName = await SFileFindGetDataForDataPointer(findData);
         if (fileName != null && fileName != "(signature)") {
           _otrFiles.add(fileName);
+          print(fileName);
         }
-      } else if (!fileFound /*&& GetLastError() != ERROR_NO_MORE_FILES*/) {}
+      } catch (e) {
+        // TODO: Check if error is ERROR_NO_MORE_FILES
+        print("Failed to get file name: $e");
+        fileFound = false;
+      }
     } while (fileFound);
 
     SFileFindClose(hFind);

@@ -27,11 +27,10 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     return handle;
   }
 
-  Future<int?> SFileCloseArchive(String hMpq) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileCloseArchive', {
+  Future<void> SFileCloseArchive(String hMpq) async {
+    await methodChannel.invokeMethod<void>('SFileCloseArchive', {
       'hMpq': hMpq
     });
-    return handle;
   }
 
   @override
@@ -55,10 +54,9 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileCloseFile(String hFile) async {
-    final handle = await methodChannel
-        .invokeMethod<int>('SFileCloseFile', {'hFile': hFile});
-    return handle;
+  Future<void> SFileCloseFile(String hFile) async {
+    await methodChannel
+        .invokeMethod<void>('SFileCloseFile', {'hFile': hFile});
   }
 
   @override
@@ -73,7 +71,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
 
   @override
   Future<void> SFileRemoveFile(String hMpq, String fileName) async {
-    await methodChannel.invokeMethod<int>('SFileRemoveFile', {
+    await methodChannel.invokeMethod<void>('SFileRemoveFile', {
       'hMpq': hMpq,
       'fileName': fileName
     });
@@ -81,7 +79,7 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
 
   @override
   Future<void> SFileRenameFile(String hMpq, String oldFileName, String newFileName) async {
-    await methodChannel.invokeMethod<int>('SFileRenameFile', {
+    await methodChannel.invokeMethod<void>('SFileRenameFile', {
       'hMpq': hMpq,
       'oldFileName': oldFileName,
       'newFileName': newFileName
@@ -107,20 +105,18 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
   }
 
   @override
-  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileFindNextFile', {
+  Future<void> SFileFindNextFile(String hFind, String lpFindFileData) async {
+    await methodChannel.invokeMethod<void>('SFileFindNextFile', {
       'hFind': hFind,
       'lpFindFileData': lpFindFileData
     });
-    return handle;
   }
 
   @override
-  Future<int?> SFileFindClose(String hFind) async {
-    final handle = await methodChannel.invokeMethod<int>('SFileFindClose', {
+  Future<void> SFileFindClose(String hFind) async {
+    await methodChannel.invokeMethod<void>('SFileFindClose', {
       'hFind': hFind
     });
-    return handle;
   }
 
   // Custom Methods
