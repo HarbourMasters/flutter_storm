@@ -127,6 +127,26 @@ std::string MPQErrorString(DWORD error) {
             return "Cannot complete this function.";
         case ERROR_FILE_CORRUPT:
             return "The file or directory is corrupted and unreadable.";
+        case ERROR_AVI_FILE:
+            return "The file is an MPQ but an AVI file.";
+        case ERROR_UNKNOWN_FILE_KEY:
+            return "The system cannot find the key file.";
+        case ERROR_CHECKSUM_ERROR:
+            return "The crc sector doesn't match.";
+        case ERROR_INTERNAL_FILE:
+            return "The given operation is not allowed on internal file.";
+        case ERROR_BASE_FILE_MISSING:
+            return "The file is present as incremental patch file, but base file is missing.";
+        case ERROR_MARKED_FOR_DELETE:
+            return "The file was marked as \"deleted\" in the MPQ.";
+        case ERROR_FILE_INCOMPLETE:
+            return "The required file part is missing.";
+        case ERROR_UNKNOWN_FILE_NAMES:
+            return "A name of at least one file is unknown.";
+        case ERROR_CANT_FIND_PATCH_PREFIX:
+            return "StormLib was unable to find patch prefix for the patches.";
+        case ERROR_FAKE_MPQ_HEADER:
+            return "The header at this position is fake header.";
         case ERROR_FAILED_TO_OPEN_MPQ: // TODO: Find a better way to handle this
             return "Failed to open mpq archive it could be corrupted or busy.";
     }
