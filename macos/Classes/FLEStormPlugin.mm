@@ -40,6 +40,9 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
 
 #define METHOD(name) if ([call.method isEqualToString:name])
 
+// Custom errors
+#define ERROR_FAILED_TO_OPEN_MPQ 0x20
+
 @interface FLEStormPlugin ()
 @end
 
@@ -85,7 +88,7 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
 
         NSString *mpqName = args[@"mpqName"];
         NSNumber *mpqFlags = args[@"mpqFlags"];
-        
+
         HANDLE mpqHandle;
         bool success = SFileOpenArchive([mpqName UTF8String], [mpqFlags unsignedIntValue], 0, &mpqHandle);
         if (success) {
@@ -318,7 +321,7 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             uuid = [[NSUUID UUID] UUIDString];
         }
     }
-    
+
     return uuid;
 }
 
@@ -356,9 +359,11 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             return @"Cannot complete this function.";
         case ERROR_FILE_CORRUPT:
             return @"The file or directory is corrupted and unreadable.";
+        case ERROR_FAILED_TO_OPEN_MPQ: // TODO: Find a better way to handle this
+            return @"Failed to open mpq archive it could be corrupted or busy.";
     }
 
-    return @"Unknown error";
+    return [NSString stringWithFormat:@"Unknown error: (%u)", error];;
 }
 
 - (FlutterError *)flutterErrorFromError:(DWORD)error {

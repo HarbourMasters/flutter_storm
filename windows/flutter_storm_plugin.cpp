@@ -16,6 +16,8 @@
 
 using namespace flutter;
 
+#define ERROR_FAILED_TO_OPEN_MPQ 0x20
+
 #define METHOD(name) if(method_call.method_name().compare(name) == 0)
 #define ASSERT(arg) if(!arg) {                                               \
                         result->Error("argument_error", #arg " is missing"); \
@@ -125,7 +127,10 @@ std::string MPQErrorString(DWORD error) {
             return "Cannot complete this function.";
         case ERROR_FILE_CORRUPT:
             return "The file or directory is corrupted and unreadable.";
+        case ERROR_FAILED_TO_OPEN_MPQ: // TODO: Find a better way to handle this
+            return "Failed to open mpq archive it could be corrupted or busy.";
     }
+    return "Unknown error [" + std::to_string(error) + "]";
 }
 
 #define FAIL_WITH_ERROR(error) result->Error(std::to_string(error), MPQErrorString(GetLastError()));
@@ -257,7 +262,7 @@ namespace flutter_storm {
             HANDLE handle = handles[*hMpq];
 
             bool rs = SFileHasFile(handle, (*fileName).c_str());
-            result->Success(EncodableValue(true));
+            result->Success(EncodableValue(rs));
             return;
         }
 
@@ -510,12 +515,12 @@ namespace flutter_storm {
 
             HANDLE handle = handles[*hFind];
             bool rs = SFileFindNextFile(handle, findData);
-            
+
             if (rs) {
                 result->Success();
                 return;
             }
-            
+
             FAIL_WITH_ERROR(GetLastError());
             return;
         }

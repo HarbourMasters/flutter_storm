@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 // MPQ Flags that needs to be implemented
 
 const int MPQ_CREATE_LISTFILE       =  0x00100000;  // Also add the (listfile) file
