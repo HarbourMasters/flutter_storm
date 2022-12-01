@@ -28,7 +28,7 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCloseArchive(String hMpq) async {
+  Future<void> SFileCloseArchive(String hMpq) async {
     throwUnimplemented();
   }
 
@@ -40,7 +40,7 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
-  Future<int?> SFileCloseFile(String hFile) async {
+  Future<void> SFileCloseFile(String hFile) async {
     throwUnimplemented();
   }
 
@@ -64,11 +64,11 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
-  Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+  Future<void> SFileFindNextFile(String hFind, String lpFindFileData) async {
     throwUnimplemented();
   }
 
-  Future<int?> SFileFindClose(String hFind) async {
+  Future<void> SFileFindClose(String hFind) async {
     throwUnimplemented();
   }
 

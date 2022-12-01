@@ -9,7 +9,7 @@ Future<String?> SFileCreateArchive(String mpqName, int mpqFlags, int maxFileCoun
   return FlutterStormPlatform.instance.SFileCreateArchive(mpqName, mpqFlags, maxFileCount);
 }
 
-Future<int?> SFileCloseArchive(String hMpq) async {
+Future<void> SFileCloseArchive(String hMpq) async {
   return FlutterStormPlatform.instance.SFileCloseArchive(hMpq);
 }
 
@@ -21,7 +21,7 @@ Future<String?> SFileCreateFile(String hMpq, String fileName, int fileSize, int 
   return FlutterStormPlatform.instance.SFileCreateFile(hMpq, fileName, fileSize, dwFlags);
 }
 
-Future<int?> SFileCloseFile(String hFile) async {
+Future<void> SFileCloseFile(String hFile) async {
   return FlutterStormPlatform.instance.SFileCloseFile(hFile);
 }
 
@@ -45,11 +45,11 @@ Future<String?> SFileFindFirstFile(String hMpq, String szMask, String lpFindFile
   return FlutterStormPlatform.instance.SFileFindFirstFile(hMpq, szMask, lpFindFileData);
 }
 
-Future<int?> SFileFindNextFile(String hFind, String lpFindFileData) async {
+Future<void> SFileFindNextFile(String hFind, String lpFindFileData) async {
   return FlutterStormPlatform.instance.SFileFindNextFile(hFind, lpFindFileData);
 }
 
-Future<int?> SFileFindClose(String hFind) async {
+Future<void> SFileFindClose(String hFind) async {
   return FlutterStormPlatform.instance.SFileFindClose(hFind);
 }
 

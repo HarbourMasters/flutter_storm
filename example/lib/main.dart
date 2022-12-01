@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_storm/bridge/errors.dart';
 import 'package:flutter_storm/bridge/flags.dart';
 import 'dart:async';
 
@@ -55,8 +57,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   Future<void> displayOTRContents(String file) async {
-    String? mpqHandle = await SFileOpenArchive(
+    String? mpqHandle;
+    try {
+      mpqHandle = await SFileOpenArchive(
         file, MPQ_OPEN_READ_ONLY);
+    } on StormException catch (e) {
+      print(e.error);
+      print(e.message);
+    }
 
     if (mpqHandle == null) {
       print("Failed to open archive");
@@ -80,13 +88,20 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     bool fileFound = false;
 
     do {
-      fileFound = await SFileFindNextFile(hFind, findData) == 0;
-      if (fileFound) {
+      try {
+        await SFileFindNextFile(hFind, findData);
+        fileFound = true;
         String? fileName = await SFileFindGetDataForDataPointer(findData);
         if (fileName != null && fileName != "(signature)") {
           _otrFiles.add(fileName);
+          print(fileName);
         }
-      } else if (!fileFound /*&& GetLastError() != ERROR_NO_MORE_FILES*/) {}
+      } on StormException catch (e) {
+        if(e.error == StormError.ERROR_NO_MORE_FILES){
+          print("Failed to get file name: $e");
+          fileFound = false;
+        }
+      }
     } while (fileFound);
 
     SFileFindClose(hFind);
