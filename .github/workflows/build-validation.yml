@@ -1,0 +1,54 @@
+name: build-validation
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable' # or: 'beta', 'dev' or 'master'
+        cache: true
+        cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
+        cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
+    - run: |
+        cd example
+        flutter config --enable-macos-desktop
+    - run: |
+        cd example
+        flutter build macos
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable' # or: 'beta', 'dev' or 'master'
+        cache: true
+        cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
+        cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
+    - run: |
+        cd example
+        flutter config --enable-windows-desktop
+    - run: |
+        cd example
+        flutter build windows
+  # build-linux:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v3
+  #   - uses: subosito/flutter-action@v2
+  #     with:
+  #       channel: 'stable' # or: 'beta', 'dev' or 'master'
+  #       cache: true
+  #       cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:' # optional, change this to force refresh cache
+  #       cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:' # optional, change this to specify the cache path
+  #   - run: flutter config --enable-linux-desktop
+  #   - run: flutter build linux

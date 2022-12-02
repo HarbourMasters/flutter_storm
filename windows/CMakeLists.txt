@@ -33,14 +33,16 @@ set(STORM_GIT_COMMIT 3235d01eab95af50c589a615bd8d492f911369f7)
 set(STORM_SKIP_INSTALL ON)
 add_definitions(-DSTORMLIB_NO_AUTO_LINK)
 include(FetchContent)
+include(ExternalProject)
 FetchContent_Declare(StormLib GIT_REPOSITORY ${STORM_GIT_REPO} GIT_TAG ${STORM_GIT_COMMIT})
 FetchContent_GetProperties(StormLib)
-if(NOT stormlib_POPULATED)
-  FetchContent_Populate(StormLib)
-  add_subdirectory(${stormlib_SOURCE_DIR} ${stormlib_BINARY_DIR})
-  include_directories(${stormlib_SOURCE_DIR}/src)
-  link_libraries(${stormlib_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/StormLib.lib)
-endif()
+FetchContent_Populate(StormLib)
+include_directories(${stormlib_SOURCE_DIR}/src)
+ExternalProject_Add(StormLib
+  URL ${stormlib_SOURCE_DIR}
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/StormLib
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+)
 
 #================================================
 
@@ -69,7 +71,7 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin )
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/StormLib/lib/StormLib.lib flutter flutter_wrapper_plugin)
 
 target_compile_options(${PLUGIN_NAME}
   PRIVATE "/wd4101;/wd4267;/wd4334;/wd4244"
