@@ -577,7 +577,7 @@ namespace flutter_storm {
 
             auto hMpq = GetStringOrNull(*arguments, "hMpq");
             auto szFileName = GetStringOrNull(*arguments, "szFileName");
-            auto dwSearchScope = GetIntOrNull(*arguments, "dwSearchScope");
+            auto dwSearchScope = GetInt64ValueOrNull(*arguments, "dwSearchScope");
             ASSERT(hMpq);
             ASSERT(szFileName);
             ASSERT(dwSearchScope);
@@ -632,7 +632,7 @@ namespace flutter_storm {
                 std::get_if<flutter::EncodableMap>(method_call.arguments());
 
             auto hFile = GetStringOrNull(*arguments, "hFile");
-            auto dwToRead = GetIntOrNull(*arguments, "dwToRead");
+            auto dwToRead = GetInt64ValueOrNull(*arguments, "dwToRead");
             ASSERT(hFile);
             ASSERT(dwToRead);
 
