@@ -602,6 +602,31 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileGetFileSize") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            ASSERT(hFile);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hFile)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE handle = handles[*hFile];
+            DWORD size = SFileGetFileSize(handle, 0);
+
+            if (size != SFILE_INVALID_SIZE) {
+                result->Success(EncodableValue(size));
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
         // Custom methods
 
         METHOD("SFileFindCreateDataPointer") {

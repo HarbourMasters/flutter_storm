@@ -57,6 +57,10 @@ Future<String?> SFileOpenFileEx(String hMpq, String szFileName, int dwSearchScop
   return FlutterStormPlatform.instance.SFileOpenFileEx(hMpq, szFileName, dwSearchScope);
 }
 
+Future<int?> SFileGetFileSize(String hFile) async {
+  return FlutterStormPlatform.instance.SFileGetFileSize(hFile);
+}
+
 // Custom Methods
 
 Future<String?> SFileFindCreateDataPointer() async {

@@ -139,6 +139,14 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     return handle;
   }
 
+  @override
+  Future<int?> SFileGetFileSize(String hFile) async {
+    final handle = await invokeMethod<int>('SFileGetFileSize', {
+      'hFile': hFile
+    });
+    return handle;
+  }
+
   // Custom Methods
 
   @override

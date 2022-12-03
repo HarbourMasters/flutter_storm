@@ -27,6 +27,7 @@ NSString *const kFileFindFirstFile = @"SFileFindFirstFile";
 NSString *const kFileFindNextFile = @"SFileFindNextFile";
 NSString *const kFileFindClose = @"SFileFindClose";
 NSString *const kFileOpenFileEx = @"SFileOpenFileEx";
+NSString *const kFileGetFileSize = @"SFileGetFileSize";
 
 
 // Own additions
@@ -299,6 +300,21 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             handles[uuid.UTF8String] = fileHandle;
 
             result(uuid);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+    }
+
+    METHOD(kFileGetFileSize) {
+        NSDictionary *args = call.arguments;
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = [self getHandleOrError:fileHandle result:result];
+
+        DWORD fileSize = SFileGetFileSize(handle, 0);
+        if (fileSize != SFILE_INVALID_SIZE) {
+            result([NSNumber numberWithUnsignedInt:fileSize]);
             return;
         } else {
             result([self flutterErrorFromError:GetLastError()]);
