@@ -53,6 +53,10 @@ Future<void> SFileFindClose(String hFind) async {
   return FlutterStormPlatform.instance.SFileFindClose(hFind);
 }
 
+Future<String?> SFileOpenFileEx(String hMpq, String szFileName, int dwSearchScope) async {
+  return FlutterStormPlatform.instance.SFileOpenFileEx(hMpq, szFileName, dwSearchScope);
+}
+
 // Custom Methods
 
 Future<String?> SFileFindCreateDataPointer() async {

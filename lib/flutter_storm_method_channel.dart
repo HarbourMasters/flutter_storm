@@ -129,6 +129,16 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     });
   }
 
+  @override
+  Future<String?> SFileOpenFileEx(String hMpq, String szFileName, int dwSearchScope) async {
+    final handle = await invokeMethod<String>('SFileOpenFileEx', {
+      'hMpq': hMpq,
+      'szFileName': szFileName,
+      'dwSearchScope': dwSearchScope
+    });
+    return handle;
+  }
+
   // Custom Methods
 
   @override

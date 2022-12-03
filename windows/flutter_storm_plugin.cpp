@@ -571,6 +571,39 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileOpenFileEx") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetStringOrNull(*arguments, "hMpq");
+            auto szFileName = GetStringOrNull(*arguments, "szFileName");
+            auto dwSearchScope = GetIntOrNull(*arguments, "dwSearchScope");
+            ASSERT(hMpq);
+            ASSERT(szFileName);
+            ASSERT(dwSearchScope);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hMpq)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE fHandle = nullptr;
+            HANDLE handle = handles[*hMpq];
+            SFileOpenFileEx(handle, (*szFileName).c_str(), *dwSearchScope, &fHandle);
+            if (fHandle != nullptr) {
+                std::string uuid = GenerateUUID();
+                handles[uuid] = fHandle;
+                result->Success(EncodableValue(uuid));
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
+        // Custom methods
+
         METHOD("SFileFindCreateDataPointer") {
             SFILE_FIND_DATA findData = {};
             std::string uuid = GenerateUUID();

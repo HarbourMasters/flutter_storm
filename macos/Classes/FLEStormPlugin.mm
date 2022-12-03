@@ -26,6 +26,7 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
 NSString *const kFileFindFirstFile = @"SFileFindFirstFile";
 NSString *const kFileFindNextFile = @"SFileFindNextFile";
 NSString *const kFileFindClose = @"SFileFindClose";
+NSString *const kFileOpenFileEx = @"SFileOpenFileEx";
 
 
 // Own additions
@@ -277,6 +278,27 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             handles.erase([findHandle UTF8String]);
 
             result(nil);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+    }
+
+    METHOD(kFileOpenFileEx) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = [self getHandleOrError:mpqHandle result:result];
+        NSString *fileName = args[@"szFileName"];
+        NSNumber *dwSearchScope = args[@"dwSearchScope"];
+        HANDLE fileHandle = NULL;
+
+        SFileOpenFileEx(handle, [fileName UTF8String], [dwSearchScope unsignedIntValue], &fileHandle);
+        if (fileHandle != NULL) {
+            NSString *uuid = [self generateUUIDForType:ReferenceTypeHandle];
+            handles[uuid.UTF8String] = fileHandle;
+
+            result(uuid);
             return;
         } else {
             result([self flutterErrorFromError:GetLastError()]);
