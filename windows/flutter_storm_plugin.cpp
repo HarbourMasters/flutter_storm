@@ -619,7 +619,7 @@ namespace flutter_storm {
             DWORD size = SFileGetFileSize(handle, 0);
 
             if (size != SFILE_INVALID_SIZE) {
-                result->Success(EncodableValue(size));
+                result->Success(EncodableValue((int)size));
                 return;
             }
 
@@ -649,8 +649,8 @@ namespace flutter_storm {
             bool rs = SFileReadFile(handle, lpBuffer, *dwToRead, &countBytes, NULL);
 
             if (rs) {
-                EncodableValue bytes = EncodableValue(std::vector<uint8_t>(lpBuffer, lpBuffer + countBytes));
-                result->Success(bytes);
+                std::vector<uint8_t> data(lpBuffer, lpBuffer + countBytes);
+                result->Success(EncodableValue(data));
                 return;
             }
 
