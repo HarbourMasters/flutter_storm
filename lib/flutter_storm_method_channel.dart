@@ -147,6 +147,15 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     return handle;
   }
 
+  @override
+  Future<Uint8List?> SFileReadFile(String hFile, int dwToRead) async {
+    final handle = await invokeMethod<Uint8List>('SFileReadFile', {
+      'hFile': hFile,
+      'dwToRead': dwToRead
+    });
+    return handle;
+  }
+
   // Custom Methods
 
   @override

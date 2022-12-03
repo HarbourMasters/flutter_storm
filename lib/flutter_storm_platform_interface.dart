@@ -80,6 +80,10 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
+  Future<Uint8List?> SFileReadFile(String hFile, int dwToRead) async {
+    throwUnimplemented();
+  }
+
   // Custom Methods
 
   Future<String?> SFileFindCreateDataPointer() async {

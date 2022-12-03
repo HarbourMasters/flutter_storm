@@ -28,6 +28,7 @@ NSString *const kFileFindNextFile = @"SFileFindNextFile";
 NSString *const kFileFindClose = @"SFileFindClose";
 NSString *const kFileOpenFileEx = @"SFileOpenFileEx";
 NSString *const kFileGetFileSize = @"SFileGetFileSize";
+NSString *const kFileReadFile = @"SFileReadFile";
 
 
 // Own additions
@@ -320,6 +321,26 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             result([self flutterErrorFromError:GetLastError()]);
             return;
         }
+    }
+
+    METHOD(kFileReadFile) {
+        NSDictionary *args = call.arguments;
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = [self getHandleOrError:fileHandle result:result];
+        NSNumber *dwToRead = args[@"dwToRead"];
+        DWORD countBytes;
+        char* lpBuffer = new char[[dwToRead unsignedIntValue]];
+
+        bool success = SFileReadFile(handle, lpBuffer, [dwToRead unsignedIntValue], &countBytes, NULL);
+        if (success) {
+            NSData *data = [NSData dataWithBytes:lpBuffer length:countBytes];
+            result([FlutterStandardTypedData typedDataWithBytes:data]);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+        return;
     }
 
     // Custom additions

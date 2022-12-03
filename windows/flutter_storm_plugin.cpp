@@ -627,6 +627,37 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileReadFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            auto dwToRead = GetIntOrNull(*arguments, "dwToRead");
+            ASSERT(hFile);
+            ASSERT(dwToRead);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hFile)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE handle = handles[*hFile];
+            DWORD countBytes;
+            char* lpBuffer = new char[*dwToRead];
+
+            bool rs = SFileReadFile(handle, lpBuffer, *dwToRead, &countBytes, NULL);
+
+            if (rs) {
+                EncodableValue bytes = EncodableValue(std::vector<uint8_t>(lpBuffer, lpBuffer + countBytes));
+                result->Success(bytes);
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
         // Custom methods
 
         METHOD("SFileFindCreateDataPointer") {
