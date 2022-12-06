@@ -129,6 +129,33 @@ class MethodChannelFlutterStorm extends FlutterStormPlatform {
     });
   }
 
+  @override
+  Future<String?> SFileOpenFileEx(String hMpq, String szFileName, int dwSearchScope) async {
+    final handle = await invokeMethod<String>('SFileOpenFileEx', {
+      'hMpq': hMpq,
+      'szFileName': szFileName,
+      'dwSearchScope': dwSearchScope
+    });
+    return handle;
+  }
+
+  @override
+  Future<int?> SFileGetFileSize(String hFile) async {
+    final handle = await invokeMethod<int>('SFileGetFileSize', {
+      'hFile': hFile
+    });
+    return handle;
+  }
+
+  @override
+  Future<Uint8List?> SFileReadFile(String hFile, int dwToRead) async {
+    final handle = await invokeMethod<Uint8List>('SFileReadFile', {
+      'hFile': hFile,
+      'dwToRead': dwToRead
+    });
+    return handle;
+  }
+
   // Custom Methods
 
   @override

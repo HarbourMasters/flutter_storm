@@ -72,6 +72,18 @@ abstract class FlutterStormPlatform extends PlatformInterface {
     throwUnimplemented();
   }
 
+  Future<String?> SFileOpenFileEx(String hMpq, String szFileName, int dwSearchScope) async {
+    throwUnimplemented();
+  }
+
+  Future<int?> SFileGetFileSize(String hFile) async {
+    throwUnimplemented();
+  }
+
+  Future<Uint8List?> SFileReadFile(String hFile, int dwToRead) async {
+    throwUnimplemented();
+  }
+
   // Custom Methods
 
   Future<String?> SFileFindCreateDataPointer() async {

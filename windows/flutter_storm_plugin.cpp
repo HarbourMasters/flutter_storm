@@ -571,6 +571,95 @@ namespace flutter_storm {
             return;
         }
 
+        METHOD("SFileOpenFileEx") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hMpq = GetStringOrNull(*arguments, "hMpq");
+            auto szFileName = GetStringOrNull(*arguments, "szFileName");
+            auto dwSearchScope = GetInt64ValueOrNull(*arguments, "dwSearchScope");
+            ASSERT(hMpq);
+            ASSERT(szFileName);
+            ASSERT(dwSearchScope);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hMpq)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE fHandle = nullptr;
+            HANDLE handle = handles[*hMpq];
+            SFileOpenFileEx(handle, (*szFileName).c_str(), *dwSearchScope, &fHandle);
+            if (fHandle != nullptr) {
+                std::string uuid = GenerateUUID();
+                handles[uuid] = fHandle;
+                result->Success(EncodableValue(uuid));
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
+        METHOD("SFileGetFileSize") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            ASSERT(hFile);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hFile)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE handle = handles[*hFile];
+            DWORD size = SFileGetFileSize(handle, 0);
+
+            if (size != SFILE_INVALID_SIZE) {
+                result->Success(EncodableValue((int)size));
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
+        METHOD("SFileReadFile") {
+            const auto* arguments =
+                std::get_if<flutter::EncodableMap>(method_call.arguments());
+
+            auto hFile = GetStringOrNull(*arguments, "hFile");
+            auto dwToRead = GetInt64ValueOrNull(*arguments, "dwToRead");
+            ASSERT(hFile);
+            ASSERT(dwToRead);
+
+            // check if handle is valid
+            if (!HAS_HANDLE(*hFile)) {
+                FAIL_WITH_ERROR(ERROR_INVALID_HANDLE);
+                return;
+            }
+
+            HANDLE handle = handles[*hFile];
+            DWORD countBytes;
+            char* lpBuffer = new char[*dwToRead];
+
+            bool rs = SFileReadFile(handle, lpBuffer, *dwToRead, &countBytes, NULL);
+
+            if (rs) {
+                std::vector<uint8_t> data(lpBuffer, lpBuffer + countBytes);
+                result->Success(EncodableValue(data));
+                return;
+            }
+
+            FAIL_WITH_ERROR(GetLastError());
+            return;
+        }
+
+        // Custom methods
+
         METHOD("SFileFindCreateDataPointer") {
             SFILE_FIND_DATA findData = {};
             std::string uuid = GenerateUUID();

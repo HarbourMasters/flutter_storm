@@ -26,6 +26,9 @@ NSString *const kFileFinishFile = @"SFileFinishFile";
 NSString *const kFileFindFirstFile = @"SFileFindFirstFile";
 NSString *const kFileFindNextFile = @"SFileFindNextFile";
 NSString *const kFileFindClose = @"SFileFindClose";
+NSString *const kFileOpenFileEx = @"SFileOpenFileEx";
+NSString *const kFileGetFileSize = @"SFileGetFileSize";
+NSString *const kFileReadFile = @"SFileReadFile";
 
 
 // Own additions
@@ -282,6 +285,62 @@ typedef  NS_ENUM(NSInteger, ReferenceType) {
             result([self flutterErrorFromError:GetLastError()]);
             return;
         }
+    }
+
+    METHOD(kFileOpenFileEx) {
+        NSDictionary *args = call.arguments;
+        NSString *mpqHandle = args[@"hMpq"];
+        HANDLE handle = [self getHandleOrError:mpqHandle result:result];
+        NSString *fileName = args[@"szFileName"];
+        NSNumber *dwSearchScope = args[@"dwSearchScope"];
+        HANDLE fileHandle = NULL;
+
+        SFileOpenFileEx(handle, [fileName UTF8String], [dwSearchScope unsignedIntValue], &fileHandle);
+        if (fileHandle != NULL) {
+            NSString *uuid = [self generateUUIDForType:ReferenceTypeHandle];
+            handles[uuid.UTF8String] = fileHandle;
+
+            result(uuid);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+    }
+
+    METHOD(kFileGetFileSize) {
+        NSDictionary *args = call.arguments;
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = [self getHandleOrError:fileHandle result:result];
+
+        DWORD fileSize = SFileGetFileSize(handle, 0);
+        if (fileSize != SFILE_INVALID_SIZE) {
+            result([NSNumber numberWithUnsignedInt:fileSize]);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+    }
+
+    METHOD(kFileReadFile) {
+        NSDictionary *args = call.arguments;
+        NSString *fileHandle = args[@"hFile"];
+        HANDLE handle = [self getHandleOrError:fileHandle result:result];
+        NSNumber *dwToRead = args[@"dwToRead"];
+        DWORD countBytes;
+        char* lpBuffer = new char[[dwToRead unsignedIntValue]];
+
+        bool success = SFileReadFile(handle, lpBuffer, [dwToRead unsignedIntValue], &countBytes, NULL);
+        if (success) {
+            NSData *data = [NSData dataWithBytes:lpBuffer length:countBytes];
+            result([FlutterStandardTypedData typedDataWithBytes:data]);
+            return;
+        } else {
+            result([self flutterErrorFromError:GetLastError()]);
+            return;
+        }
+        return;
     }
 
     // Custom additions
