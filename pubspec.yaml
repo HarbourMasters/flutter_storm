@@ -1,11 +1,11 @@
 name: flutter_storm
-description: A new Flutter plugin project.
+description: StormLib bindings for Flutter
 version: 0.0.1
 homepage:
 
 environment:
   sdk: '>=2.18.4 <3.0.0'
-  flutter: ">=2.5.0"
+  flutter: ">=2.11.0"
 
 dependencies:
   flutter:
@@ -13,6 +13,8 @@ dependencies:
   plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
+  ffi: ^1.2.1
+  ffigen: ^5.0.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
@@ -32,14 +34,16 @@ flutter:
   # This is required for using `dart:ffi`.
   # All these are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
+  #
+  # Please refer to README.md for a detailed explanation.
   plugin:
     platforms:
       linux:
-        pluginClass: FlutterStormPlugin
+        ffiPlugin: true
       macos:
-        pluginClass: FlutterStormPlugin
+        ffiPlugin: true
       windows:
-        pluginClass: FlutterStormPluginCApi
+        ffiPlugin: true
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
