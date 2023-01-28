@@ -3,21 +3,30 @@
 # version, as doing so will cause the plugin to fail to compile for some
 # customers of the plugin.
 cmake_minimum_required(VERSION 3.14)
+include(FetchContent)
 
 # Project-level configuration.
 set(PROJECT_NAME "flutter_storm")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
 # Invoke the build for native code shared with the other target platforms.
-# This can be changed to accomodate different builds.
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../src" "${CMAKE_CURRENT_BINARY_DIR}/shared")
+set(STORM_GIT_REPO https://github.com/ladislav-zezula/StormLib.git)
+set(STORM_GIT_COMMIT 3235d01eab95af50c589a615bd8d492f911369f7)
+SET(STORM_SKIP_INSTALL ON CACHE BOOL "Ignore stormlib install" FORCE)
+add_definitions(-DSTORMLIB_NO_AUTO_LINK)
+FetchContent_Declare(StormLib GIT_REPOSITORY ${STORM_GIT_REPO} GIT_TAG ${STORM_GIT_COMMIT})
+FetchContent_GetProperties(StormLib)
+if(NOT stormlib_POPULATED)
+  FetchContent_Populate(StormLib)
+  add_subdirectory(${stormlib_SOURCE_DIR} ${stormlib_BINARY_DIR})
+  include_directories(${stormlib_SOURCE_DIR}/src)
+endif()
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
 set(flutter_storm_bundled_libraries
-  # Defined in ../src/CMakeLists.txt.
-  # This can be changed to accomodate different builds.
-  $<TARGET_FILE:flutter_storm>
+  # "${CMAKE_CURRENT_SOURCE_DIR}/lib/libstorm.a"
+  $<TARGET_FILE:storm>
   PARENT_SCOPE
 )

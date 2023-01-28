@@ -1,39 +1,178 @@
-
-import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:isolate';
+import 'dart:typed_data';
+import 'package:ffi/ffi.dart';
 
 import 'flutter_storm_bindings_generated.dart';
 
-/// A very short-lived native function.
-///
-/// For very short-lived functions, it is fine to call them on the main isolate.
-/// They will block the Dart execution while running the native function, so
-/// only do this for native functions which are guaranteed to be short-lived.
-int sum(int a, int b) => _bindings.sum(a, b);
+const int ERROR_NO_MORE_FILES = 1001;
 
-/// A longer lived native function, which occupies the thread calling it.
-///
-/// Do not call these kind of native functions in the main isolate. They will
-/// block Dart execution. This will cause dropped frames in Flutter applications.
-/// Instead, call these native functions on a separate isolate.
-///
-/// Modify this to suit your own use case. Example use cases:
-///
-/// 1. Reuse a single isolate for various different kinds of requests.
-/// 2. Use multiple helper isolates for parallel execution.
-Future<int> sumAsync(int a, int b) async {
-  final SendPort helperIsolateSendPort = await _helperIsolateSendPort;
-  final int requestId = _nextSumRequestId++;
-  final _SumRequest request = _SumRequest(requestId, a, b);
-  final Completer<int> completer = Completer<int>();
-  _sumRequests[requestId] = completer;
-  helperIsolateSendPort.send(request);
-  return completer.future;
+class StormLibException {
+  final int code;
+  final String message;
+
+  StormLibException(this.code, this.message);
+
+  @override
+  String toString() => message;
 }
 
-const String _libName = 'flutter_storm';
+class FindFileHandle {
+  // char   cFileName[MAX_PATH];              // Name of the found file
+  // char * szPlainName;                      // Plain name of the found file
+  // DWORD  dwHashIndex;                      // Hash table index for the file
+  // DWORD  dwBlockIndex;                     // Block table index for the file
+  // DWORD  dwFileSize;                       // Uncompressed size of the file, in bytes
+  // DWORD  dwFileFlags;                      // MPQ file flags
+  // DWORD  dwCompSize;                       // Compressed file size
+  // DWORD  dwFileTimeLo;                     // Low 32-bits of the file time (0 if not present)
+  // DWORD  dwFileTimeHi;                     // High 32-bits of the file time (0 if not present)
+  // LCID   lcLocale;                         // Locale version
+
+  late HANDLE _handle = calloc();
+  final Pointer<SFILE_FIND_DATA> _data = calloc();
+
+  /// Closes a find handle that has been created by SFileFindFirstFile.
+  void close() {
+    _bindings.SFileFindClose(_handle);
+    // calloc.free(_handle);
+    calloc.free(_data);
+  }
+
+  String? fileName() {
+    if (_data.ref.cFileName[0] == 0) {
+      return null;
+    }
+
+    return String.fromCharCodes(_data.ref.spreadCFileName());
+  }
+}
+
+class MPQFile {
+  final Pointer<HANDLE> _handle = calloc();
+
+  /// Wwrites data to the archive.
+  void write(Uint8List data, int fileSize, int compression) {
+    final pointer = calloc<Uint8>(data.length);
+    for (int i = 0; i < data.length; i++) {
+      pointer[i] = data[i];
+    }
+    final voidStar = pointer.cast<Void>();
+
+    final int ret = _bindings.SFileWriteFile(
+        _handle.value, voidStar, fileSize, compression);
+    calloc.free(pointer);
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(error, 'SFileWriteFile failed with error $error');
+    }
+  }
+}
+
+class MPQArchive {
+  final Pointer<HANDLE> _handle = calloc();
+
+  /// Opens a MPQ archive. During the open operation, the archive is checked for corruptions, internal (listfile) and (attributes) are loaded, unless specified otherwise.
+  /// The archive is open for read and write operations, unless MPQ_OPEN_READ_ONLY is specified.
+  MPQArchive.open(String path, int priority, int flags) {
+    final mpqName = path.toNativeUtf8().cast<Char>();
+
+    final int ret =
+        _bindings.SFileOpenArchive(mpqName, priority, flags, _handle);
+    malloc.free(mpqName);
+
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileOpenArchive failed with error $error');
+    }
+  }
+
+  /// Opens or creates the MPQ archive. The function can also convert an existing file to MPQ archive.
+  /// The MPQ archive is always open for write operations.
+  MPQArchive.create(String name, int flags, int maxFileCount) {
+    final mpqName = name.toNativeUtf8().cast<Char>();
+
+    final int ret =
+        _bindings.SFileCreateArchive(mpqName, flags, maxFileCount, _handle);
+    malloc.free(mpqName);
+
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileCreateArchive failed with error $error');
+    }
+  }
+
+  /// Closes the MPQ archive. All in-memory data are freed and also any unsaved MPQ tables are saved to the archive.
+  /// After this function finishes, the Archive object is no longer valid and may not be used in any MPQ operations.
+  void close() {
+    _bindings.SFileCloseArchive(_handle.value);
+    calloc.free(_handle);
+  }
+
+  /// Searches the MPQ archive and returns name of the first file that matches the given search mask and exists in the MPQ archive.
+  /// When the caller finishes searching, the given find file handle must be freed by calling close().
+  void findFirstFile(String searchMask, FindFileHandle findFileHandle,
+      String? additionalListFile) {
+    final szMask = searchMask.toNativeUtf8().cast<Char>();
+    final szListFile = additionalListFile != null
+        ? additionalListFile.toNativeUtf8().cast<Char>()
+        : nullptr;
+
+    HANDLE ret = _bindings.SFileFindFirstFile(
+        _handle.value, szMask, findFileHandle._data, szListFile);
+
+    // free the memory
+    malloc.free(szMask);
+    if (szListFile != nullptr) {
+      malloc.free(szListFile);
+    }
+
+    if (ret == nullptr) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileFindFirstFile failed with error $error');
+    }
+
+    findFileHandle._handle = ret;
+  }
+
+  /// Continues search that has been initiated by findFirstFile.
+  /// When the caller finishes searching, the referenced file handle must be freed by calling close.
+  void findNextFile(FindFileHandle findFileHandle) {
+    final ret = _bindings.SFileFindNextFile(
+        findFileHandle._handle, findFileHandle._data);
+
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileFindNextFile failed with error $error');
+    }
+  }
+
+  /// Creates a new file within archive and prepares it for storing the data.
+  MPQFile createFile(
+      String name, int fileTime, int fileSize, int locale, int flags) {
+    final szFileName = name.toNativeUtf8().cast<Char>();
+    MPQFile file = MPQFile();
+
+    final ret = _bindings.SFileCreateFile(_handle.value, szFileName, fileTime,
+        fileSize, locale, flags, file._handle);
+
+    malloc.free(szFileName);
+
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileCreateFile failed with error $error');
+    }
+
+    return file;
+  }
+}
+
+const String _libName = 'storm';
 
 /// The dynamic library in which the symbols for [FlutterStormBindings] can be found.
 final DynamicLibrary _dylib = () {
@@ -52,80 +191,17 @@ final DynamicLibrary _dylib = () {
 /// The bindings to the native functions in [_dylib].
 final FlutterStormBindings _bindings = FlutterStormBindings(_dylib);
 
+// Helper extensions
 
-/// A request to compute `sum`.
-///
-/// Typically sent from one isolate to another.
-class _SumRequest {
-  final int id;
-  final int a;
-  final int b;
-
-  const _SumRequest(this.id, this.a, this.b);
-}
-
-/// A response with the result of `sum`.
-///
-/// Typically sent from one isolate to another.
-class _SumResponse {
-  final int id;
-  final int result;
-
-  const _SumResponse(this.id, this.result);
-}
-
-/// Counter to identify [_SumRequest]s and [_SumResponse]s.
-int _nextSumRequestId = 0;
-
-/// Mapping from [_SumRequest] `id`s to the completers corresponding to the correct future of the pending request.
-final Map<int, Completer<int>> _sumRequests = <int, Completer<int>>{};
-
-/// The SendPort belonging to the helper isolate.
-Future<SendPort> _helperIsolateSendPort = () async {
-  // The helper isolate is going to send us back a SendPort, which we want to
-  // wait for.
-  final Completer<SendPort> completer = Completer<SendPort>();
-
-  // Receive port on the main isolate to receive messages from the helper.
-  // We receive two types of messages:
-  // 1. A port to send messages on.
-  // 2. Responses to requests we sent.
-  final ReceivePort receivePort = ReceivePort()
-    ..listen((dynamic data) {
-      if (data is SendPort) {
-        // The helper isolate sent us the port on which we can sent it requests.
-        completer.complete(data);
+extension FileFindData on SFILE_FIND_DATA {
+  Iterable<int> spreadCFileName() sync* {
+    for (var i = 0; i < 1024; i++) {
+      final value = cFileName[i];
+      if (value == 0) {
         return;
       }
-      if (data is _SumResponse) {
-        // The helper isolate sent us a response to a request we sent.
-        final Completer<int> completer = _sumRequests[data.id]!;
-        _sumRequests.remove(data.id);
-        completer.complete(data.result);
-        return;
-      }
-      throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
-    });
 
-  // Start the helper isolate.
-  await Isolate.spawn((SendPort sendPort) async {
-    final ReceivePort helperReceivePort = ReceivePort()
-      ..listen((dynamic data) {
-        // On the helper isolate listen to requests and respond to them.
-        if (data is _SumRequest) {
-          final int result = _bindings.sum_long_running(data.a, data.b);
-          final _SumResponse response = _SumResponse(data.id, result);
-          sendPort.send(response);
-          return;
-        }
-        throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
-      });
-
-    // Send the the port to the main isolate on which we can receive requests.
-    sendPort.send(helperReceivePort.sendPort);
-  }, receivePort.sendPort);
-
-  // Wait until the helper isolate has sent us back the SendPort on which we
-  // can start sending requests.
-  return completer.future;
-}();
+      yield value;
+    }
+  }
+}

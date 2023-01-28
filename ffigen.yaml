@@ -7,9 +7,9 @@ description: |
 output: 'lib/flutter_storm_bindings_generated.dart'
 headers:
   entry-points:
-    - 'src/flutter_storm.h'
+    - 'src/StormLib.h'
   include-directives:
-    - 'src/flutter_storm.h'
+    - 'src/StormLib.h'
 preamble: |
   // ignore_for_file: always_specify_types
   // ignore_for_file: camel_case_types

@@ -24,4 +24,21 @@ A new Flutter FFI plugin project.
   s.platform = :osx, '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
+
+  # build stormlib cmake project
+  s.prepare_command = <<-CMD
+    # if no StormLib folder, clone it
+    if [ ! -d "StormLib" ]; then
+      curl -fsSL https://api.github.com/repos/ladislav-zezula/StormLib/zipball/v9.24 -o stormlib.zip
+      unzip -o stormlib.zip
+      mv ladislav-zezula-StormLib-* StormLib
+      rm stormlib.zip
+    fi
+    cd StormLib
+    cmake -G Xcode -B build -DSTORM_SKIP_INSTALL=ON -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DBUILD_SHARED_LIBS=ON
+    cmake --build build --config Release
+  CMD
+
+  # link stormlib
+  s.vendored_frameworks = 'StormLib/build/Release/storm.framework'
 end

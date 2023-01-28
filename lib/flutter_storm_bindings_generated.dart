@@ -26,44 +26,2906 @@ class FlutterStormBindings {
           lookup)
       : _lookup = lookup;
 
-  /// A very short-lived native function.
-  ///
-  /// For very short-lived functions, it is fine to call them on the main isolate.
-  /// They will block the Dart execution while running the native function, so
-  /// only do this for native functions which are guaranteed to be short-lived.
-  int sum(
-    int a,
-    int b,
+  /// -----------------------------------------------------------------------------
+  /// TMPQBits support - functions
+  void GetMPQBits(
+    ffi.Pointer<TMPQBits> pBits,
+    int nBitPosition,
+    int nBitLength,
+    ffi.Pointer<ffi.Void> pvBuffer,
+    int nResultByteSize,
   ) {
-    return _sum(
-      a,
-      b,
+    return _GetMPQBits(
+      pBits,
+      nBitPosition,
+      nBitLength,
+      pvBuffer,
+      nResultByteSize,
     );
   }
 
-  late final _sumPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum');
-  late final _sum = _sumPtr.asFunction<int Function(int, int)>();
+  late final _GetMPQBitsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<TMPQBits>, ffi.UnsignedInt,
+              ffi.UnsignedInt, ffi.Pointer<ffi.Void>, ffi.Int)>>('GetMPQBits');
+  late final _GetMPQBits = _GetMPQBitsPtr.asFunction<
+      void Function(
+          ffi.Pointer<TMPQBits>, int, int, ffi.Pointer<ffi.Void>, int)>();
 
-  /// A longer lived native function, which occupies the thread calling it.
-  ///
-  /// Do not call these kind of native functions in the main isolate. They will
-  /// block Dart execution. This will cause dropped frames in Flutter applications.
-  /// Instead, call these native functions on a separate isolate.
-  int sum_long_running(
-    int a,
-    int b,
+  /// UNICODE versions of the file access functions
+  ffi.Pointer<TFileStream> FileStream_CreateFile(
+    ffi.Pointer<TCHAR> szFileName,
+    int dwStreamFlags,
   ) {
-    return _sum_long_running(
-      a,
-      b,
+    return _FileStream_CreateFile(
+      szFileName,
+      dwStreamFlags,
     );
   }
 
-  late final _sum_long_runningPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum_long_running');
-  late final _sum_long_running =
-      _sum_long_runningPtr.asFunction<int Function(int, int)>();
+  late final _FileStream_CreateFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<TFileStream> Function(
+              ffi.Pointer<TCHAR>, DWORD)>>('FileStream_CreateFile');
+  late final _FileStream_CreateFile = _FileStream_CreateFilePtr.asFunction<
+      ffi.Pointer<TFileStream> Function(ffi.Pointer<TCHAR>, int)>();
+
+  ffi.Pointer<TFileStream> FileStream_OpenFile(
+    ffi.Pointer<TCHAR> szFileName,
+    int dwStreamFlags,
+  ) {
+    return _FileStream_OpenFile(
+      szFileName,
+      dwStreamFlags,
+    );
+  }
+
+  late final _FileStream_OpenFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<TFileStream> Function(
+              ffi.Pointer<TCHAR>, DWORD)>>('FileStream_OpenFile');
+  late final _FileStream_OpenFile = _FileStream_OpenFilePtr.asFunction<
+      ffi.Pointer<TFileStream> Function(ffi.Pointer<TCHAR>, int)>();
+
+  ffi.Pointer<TCHAR> FileStream_GetFileName(
+    ffi.Pointer<TFileStream> pStream,
+  ) {
+    return _FileStream_GetFileName(
+      pStream,
+    );
+  }
+
+  late final _FileStream_GetFileNamePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<TCHAR> Function(
+              ffi.Pointer<TFileStream>)>>('FileStream_GetFileName');
+  late final _FileStream_GetFileName = _FileStream_GetFileNamePtr.asFunction<
+      ffi.Pointer<TCHAR> Function(ffi.Pointer<TFileStream>)>();
+
+  int FileStream_Prefix(
+    ffi.Pointer<TCHAR> szFileName,
+    ffi.Pointer<DWORD> pdwProvider,
+  ) {
+    return _FileStream_Prefix(
+      szFileName,
+      pdwProvider,
+    );
+  }
+
+  late final _FileStream_PrefixPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Size Function(
+              ffi.Pointer<TCHAR>, ffi.Pointer<DWORD>)>>('FileStream_Prefix');
+  late final _FileStream_Prefix = _FileStream_PrefixPtr.asFunction<
+      int Function(ffi.Pointer<TCHAR>, ffi.Pointer<DWORD>)>();
+
+  int FileStream_SetCallback(
+    ffi.Pointer<TFileStream> pStream,
+    SFILE_DOWNLOAD_CALLBACK pfnCallback,
+    ffi.Pointer<ffi.Void> pvUserData,
+  ) {
+    return _FileStream_SetCallback(
+      pStream,
+      pfnCallback,
+      pvUserData,
+    );
+  }
+
+  late final _FileStream_SetCallbackPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>, SFILE_DOWNLOAD_CALLBACK,
+              ffi.Pointer<ffi.Void>)>>('FileStream_SetCallback');
+  late final _FileStream_SetCallback = _FileStream_SetCallbackPtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, SFILE_DOWNLOAD_CALLBACK,
+          ffi.Pointer<ffi.Void>)>();
+
+  int FileStream_GetBitmap(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ffi.Void> pvBitmap,
+    int cbBitmap,
+    ffi.Pointer<DWORD> pcbLengthNeeded,
+  ) {
+    return _FileStream_GetBitmap(
+      pStream,
+      pvBitmap,
+      cbBitmap,
+      pcbLengthNeeded,
+    );
+  }
+
+  late final _FileStream_GetBitmapPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>, ffi.Pointer<ffi.Void>,
+              DWORD, ffi.Pointer<DWORD>)>>('FileStream_GetBitmap');
+  late final _FileStream_GetBitmap = _FileStream_GetBitmapPtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ffi.Void>, int,
+          ffi.Pointer<DWORD>)>();
+
+  int FileStream_Read(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ULONGLONG> pByteOffset,
+    ffi.Pointer<ffi.Void> pvBuffer,
+    int dwBytesToRead,
+  ) {
+    return _FileStream_Read(
+      pStream,
+      pByteOffset,
+      pvBuffer,
+      dwBytesToRead,
+    );
+  }
+
+  late final _FileStream_ReadPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>,
+              ffi.Pointer<ffi.Void>, DWORD)>>('FileStream_Read');
+  late final _FileStream_Read = _FileStream_ReadPtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int FileStream_Write(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ULONGLONG> pByteOffset,
+    ffi.Pointer<ffi.Void> pvBuffer,
+    int dwBytesToWrite,
+  ) {
+    return _FileStream_Write(
+      pStream,
+      pByteOffset,
+      pvBuffer,
+      dwBytesToWrite,
+    );
+  }
+
+  late final _FileStream_WritePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>,
+              ffi.Pointer<ffi.Void>, DWORD)>>('FileStream_Write');
+  late final _FileStream_Write = _FileStream_WritePtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int FileStream_SetSize(
+    ffi.Pointer<TFileStream> pStream,
+    int NewFileSize,
+  ) {
+    return _FileStream_SetSize(
+      pStream,
+      NewFileSize,
+    );
+  }
+
+  late final _FileStream_SetSizePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              ffi.Pointer<TFileStream>, ULONGLONG)>>('FileStream_SetSize');
+  late final _FileStream_SetSize = _FileStream_SetSizePtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, int)>();
+
+  int FileStream_GetSize(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ULONGLONG> pFileSize,
+  ) {
+    return _FileStream_GetSize(
+      pStream,
+      pFileSize,
+    );
+  }
+
+  late final _FileStream_GetSizePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>,
+              ffi.Pointer<ULONGLONG>)>>('FileStream_GetSize');
+  late final _FileStream_GetSize = _FileStream_GetSizePtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>)>();
+
+  int FileStream_GetPos(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ULONGLONG> pByteOffset,
+  ) {
+    return _FileStream_GetPos(
+      pStream,
+      pByteOffset,
+    );
+  }
+
+  late final _FileStream_GetPosPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>,
+              ffi.Pointer<ULONGLONG>)>>('FileStream_GetPos');
+  late final _FileStream_GetPos = _FileStream_GetPosPtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>)>();
+
+  int FileStream_GetTime(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<ULONGLONG> pFT,
+  ) {
+    return _FileStream_GetTime(
+      pStream,
+      pFT,
+    );
+  }
+
+  late final _FileStream_GetTimePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>,
+              ffi.Pointer<ULONGLONG>)>>('FileStream_GetTime');
+  late final _FileStream_GetTime = _FileStream_GetTimePtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<ULONGLONG>)>();
+
+  int FileStream_GetFlags(
+    ffi.Pointer<TFileStream> pStream,
+    LPDWORD pdwStreamFlags,
+  ) {
+    return _FileStream_GetFlags(
+      pStream,
+      pdwStreamFlags,
+    );
+  }
+
+  late final _FileStream_GetFlagsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              ffi.Pointer<TFileStream>, LPDWORD)>>('FileStream_GetFlags');
+  late final _FileStream_GetFlags = _FileStream_GetFlagsPtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, LPDWORD)>();
+
+  int FileStream_Replace(
+    ffi.Pointer<TFileStream> pStream,
+    ffi.Pointer<TFileStream> pNewStream,
+  ) {
+    return _FileStream_Replace(
+      pStream,
+      pNewStream,
+    );
+  }
+
+  late final _FileStream_ReplacePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TFileStream>,
+              ffi.Pointer<TFileStream>)>>('FileStream_Replace');
+  late final _FileStream_Replace = _FileStream_ReplacePtr.asFunction<
+      int Function(ffi.Pointer<TFileStream>, ffi.Pointer<TFileStream>)>();
+
+  void FileStream_Close(
+    ffi.Pointer<TFileStream> pStream,
+  ) {
+    return _FileStream_Close(
+      pStream,
+    );
+  }
+
+  late final _FileStream_ClosePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<TFileStream>)>>(
+          'FileStream_Close');
+  late final _FileStream_Close = _FileStream_ClosePtr.asFunction<
+      void Function(ffi.Pointer<TFileStream>)>();
+
+  /// Alternate marker support. This is for MPQs masked as DLLs (*.asi), which
+  /// patch Storm.dll at runtime. Call before SFileOpenArchive
+  int SFileSetArchiveMarkers(
+    PSFILE_MARKERS pMarkers,
+  ) {
+    return _SFileSetArchiveMarkers(
+      pMarkers,
+    );
+  }
+
+  late final _SFileSetArchiveMarkersPtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(PSFILE_MARKERS)>>(
+          'SFileSetArchiveMarkers');
+  late final _SFileSetArchiveMarkers =
+      _SFileSetArchiveMarkersPtr.asFunction<int Function(PSFILE_MARKERS)>();
+
+  /// Call before SFileOpenFileEx
+  int SFileGetLocale() {
+    return _SFileGetLocale();
+  }
+
+  late final _SFileGetLocalePtr =
+      _lookup<ffi.NativeFunction<LCID Function()>>('SFileGetLocale');
+  late final _SFileGetLocale = _SFileGetLocalePtr.asFunction<int Function()>();
+
+  int SFileSetLocale(
+    int lcFileLocale,
+  ) {
+    return _SFileSetLocale(
+      lcFileLocale,
+    );
+  }
+
+  late final _SFileSetLocalePtr =
+      _lookup<ffi.NativeFunction<LCID Function(LCID)>>('SFileSetLocale');
+  late final _SFileSetLocale =
+      _SFileSetLocalePtr.asFunction<int Function(int)>();
+
+  /// -----------------------------------------------------------------------------
+  /// Functions for archive manipulation
+  int SFileOpenArchive(
+    ffi.Pointer<TCHAR> szMpqName,
+    int dwPriority,
+    int dwFlags,
+    ffi.Pointer<HANDLE> phMpq,
+  ) {
+    return _SFileOpenArchive(
+      szMpqName,
+      dwPriority,
+      dwFlags,
+      phMpq,
+    );
+  }
+
+  late final _SFileOpenArchivePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TCHAR>, DWORD, DWORD,
+              ffi.Pointer<HANDLE>)>>('SFileOpenArchive');
+  late final _SFileOpenArchive = _SFileOpenArchivePtr.asFunction<
+      int Function(ffi.Pointer<TCHAR>, int, int, ffi.Pointer<HANDLE>)>();
+
+  int SFileCreateArchive(
+    ffi.Pointer<TCHAR> szMpqName,
+    int dwCreateFlags,
+    int dwMaxFileCount,
+    ffi.Pointer<HANDLE> phMpq,
+  ) {
+    return _SFileCreateArchive(
+      szMpqName,
+      dwCreateFlags,
+      dwMaxFileCount,
+      phMpq,
+    );
+  }
+
+  late final _SFileCreateArchivePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TCHAR>, DWORD, DWORD,
+              ffi.Pointer<HANDLE>)>>('SFileCreateArchive');
+  late final _SFileCreateArchive = _SFileCreateArchivePtr.asFunction<
+      int Function(ffi.Pointer<TCHAR>, int, int, ffi.Pointer<HANDLE>)>();
+
+  int SFileCreateArchive2(
+    ffi.Pointer<TCHAR> szMpqName,
+    PSFILE_CREATE_MPQ pCreateInfo,
+    ffi.Pointer<HANDLE> phMpq,
+  ) {
+    return _SFileCreateArchive2(
+      szMpqName,
+      pCreateInfo,
+      phMpq,
+    );
+  }
+
+  late final _SFileCreateArchive2Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(ffi.Pointer<TCHAR>, PSFILE_CREATE_MPQ,
+              ffi.Pointer<HANDLE>)>>('SFileCreateArchive2');
+  late final _SFileCreateArchive2 = _SFileCreateArchive2Ptr.asFunction<
+      int Function(
+          ffi.Pointer<TCHAR>, PSFILE_CREATE_MPQ, ffi.Pointer<HANDLE>)>();
+
+  int SFileSetDownloadCallback(
+    HANDLE hMpq,
+    SFILE_DOWNLOAD_CALLBACK DownloadCB,
+    ffi.Pointer<ffi.Void> pvUserData,
+  ) {
+    return _SFileSetDownloadCallback(
+      hMpq,
+      DownloadCB,
+      pvUserData,
+    );
+  }
+
+  late final _SFileSetDownloadCallbackPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, SFILE_DOWNLOAD_CALLBACK,
+              ffi.Pointer<ffi.Void>)>>('SFileSetDownloadCallback');
+  late final _SFileSetDownloadCallback =
+      _SFileSetDownloadCallbackPtr.asFunction<
+          int Function(
+              HANDLE, SFILE_DOWNLOAD_CALLBACK, ffi.Pointer<ffi.Void>)>();
+
+  int SFileFlushArchive(
+    HANDLE hMpq,
+  ) {
+    return _SFileFlushArchive(
+      hMpq,
+    );
+  }
+
+  late final _SFileFlushArchivePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>(
+          'SFileFlushArchive');
+  late final _SFileFlushArchive =
+      _SFileFlushArchivePtr.asFunction<int Function(HANDLE)>();
+
+  int SFileCloseArchive(
+    HANDLE hMpq,
+  ) {
+    return _SFileCloseArchive(
+      hMpq,
+    );
+  }
+
+  late final _SFileCloseArchivePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>(
+          'SFileCloseArchive');
+  late final _SFileCloseArchive =
+      _SFileCloseArchivePtr.asFunction<int Function(HANDLE)>();
+
+  /// Adds another listfile into MPQ. The currently added listfile(s) remain,
+  /// so you can use this API to combining more listfiles.
+  /// Note that this function is internally called by SFileFindFirstFile
+  int SFileAddListFile(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szListFile,
+  ) {
+    return _SFileAddListFile(
+      hMpq,
+      szListFile,
+    );
+  }
+
+  late final _SFileAddListFilePtr =
+      _lookup<ffi.NativeFunction<DWORD Function(HANDLE, ffi.Pointer<TCHAR>)>>(
+          'SFileAddListFile');
+  late final _SFileAddListFile = _SFileAddListFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<TCHAR>)>();
+
+  /// Archive compacting
+  int SFileSetCompactCallback(
+    HANDLE hMpq,
+    SFILE_COMPACT_CALLBACK CompactCB,
+    ffi.Pointer<ffi.Void> pvUserData,
+  ) {
+    return _SFileSetCompactCallback(
+      hMpq,
+      CompactCB,
+      pvUserData,
+    );
+  }
+
+  late final _SFileSetCompactCallbackPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, SFILE_COMPACT_CALLBACK,
+              ffi.Pointer<ffi.Void>)>>('SFileSetCompactCallback');
+  late final _SFileSetCompactCallback = _SFileSetCompactCallbackPtr.asFunction<
+      int Function(HANDLE, SFILE_COMPACT_CALLBACK, ffi.Pointer<ffi.Void>)>();
+
+  int SFileCompactArchive(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szListFile,
+    int bReserved,
+  ) {
+    return _SFileCompactArchive(
+      hMpq,
+      szListFile,
+      bReserved,
+    );
+  }
+
+  late final _SFileCompactArchivePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              HANDLE, ffi.Pointer<TCHAR>, ffi.Char)>>('SFileCompactArchive');
+  late final _SFileCompactArchive = _SFileCompactArchivePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<TCHAR>, int)>();
+
+  /// Changing the maximum file count
+  int SFileGetMaxFileCount(
+    HANDLE hMpq,
+  ) {
+    return _SFileGetMaxFileCount(
+      hMpq,
+    );
+  }
+
+  late final _SFileGetMaxFileCountPtr =
+      _lookup<ffi.NativeFunction<DWORD Function(HANDLE)>>(
+          'SFileGetMaxFileCount');
+  late final _SFileGetMaxFileCount =
+      _SFileGetMaxFileCountPtr.asFunction<int Function(HANDLE)>();
+
+  int SFileSetMaxFileCount(
+    HANDLE hMpq,
+    int dwMaxFileCount,
+  ) {
+    return _SFileSetMaxFileCount(
+      hMpq,
+      dwMaxFileCount,
+    );
+  }
+
+  late final _SFileSetMaxFileCountPtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE, DWORD)>>(
+          'SFileSetMaxFileCount');
+  late final _SFileSetMaxFileCount =
+      _SFileSetMaxFileCountPtr.asFunction<int Function(HANDLE, int)>();
+
+  /// Changing (attributes) file
+  int SFileGetAttributes(
+    HANDLE hMpq,
+  ) {
+    return _SFileGetAttributes(
+      hMpq,
+    );
+  }
+
+  late final _SFileGetAttributesPtr =
+      _lookup<ffi.NativeFunction<DWORD Function(HANDLE)>>('SFileGetAttributes');
+  late final _SFileGetAttributes =
+      _SFileGetAttributesPtr.asFunction<int Function(HANDLE)>();
+
+  int SFileSetAttributes(
+    HANDLE hMpq,
+    int dwFlags,
+  ) {
+    return _SFileSetAttributes(
+      hMpq,
+      dwFlags,
+    );
+  }
+
+  late final _SFileSetAttributesPtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE, DWORD)>>(
+          'SFileSetAttributes');
+  late final _SFileSetAttributes =
+      _SFileSetAttributesPtr.asFunction<int Function(HANDLE, int)>();
+
+  int SFileUpdateFileAttributes(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+  ) {
+    return _SFileUpdateFileAttributes(
+      hMpq,
+      szFileName,
+    );
+  }
+
+  late final _SFileUpdateFileAttributesPtr = _lookup<
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+      'SFileUpdateFileAttributes');
+  late final _SFileUpdateFileAttributes = _SFileUpdateFileAttributesPtr
+      .asFunction<int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+
+  /// -----------------------------------------------------------------------------
+  /// Functions for manipulation with patch archives
+  int SFileOpenPatchArchive(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szPatchMpqName,
+    ffi.Pointer<ffi.Char> szPatchPathPrefix,
+    int dwFlags,
+  ) {
+    return _SFileOpenPatchArchive(
+      hMpq,
+      szPatchMpqName,
+      szPatchPathPrefix,
+      dwFlags,
+    );
+  }
+
+  late final _SFileOpenPatchArchivePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+              DWORD)>>('SFileOpenPatchArchive');
+  late final _SFileOpenPatchArchive = _SFileOpenPatchArchivePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int)>();
+
+  int SFileIsPatchedArchive(
+    HANDLE hMpq,
+  ) {
+    return _SFileIsPatchedArchive(
+      hMpq,
+    );
+  }
+
+  late final _SFileIsPatchedArchivePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>(
+          'SFileIsPatchedArchive');
+  late final _SFileIsPatchedArchive =
+      _SFileIsPatchedArchivePtr.asFunction<int Function(HANDLE)>();
+
+  /// Reading from MPQ file
+  int SFileHasFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+  ) {
+    return _SFileHasFile(
+      hMpq,
+      szFileName,
+    );
+  }
+
+  late final _SFileHasFilePtr = _lookup<
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+      'SFileHasFile');
+  late final _SFileHasFile = _SFileHasFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+
+  int SFileOpenFileEx(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+    int dwSearchScope,
+    ffi.Pointer<HANDLE> phFile,
+  ) {
+    return _SFileOpenFileEx(
+      hMpq,
+      szFileName,
+      dwSearchScope,
+      phFile,
+    );
+  }
+
+  late final _SFileOpenFileExPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, DWORD,
+              ffi.Pointer<HANDLE>)>>('SFileOpenFileEx');
+  late final _SFileOpenFileEx = _SFileOpenFileExPtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, int, ffi.Pointer<HANDLE>)>();
+
+  int SFileGetFileSize(
+    HANDLE hFile,
+    LPDWORD pdwFileSizeHigh,
+  ) {
+    return _SFileGetFileSize(
+      hFile,
+      pdwFileSizeHigh,
+    );
+  }
+
+  late final _SFileGetFileSizePtr =
+      _lookup<ffi.NativeFunction<DWORD Function(HANDLE, LPDWORD)>>(
+          'SFileGetFileSize');
+  late final _SFileGetFileSize =
+      _SFileGetFileSizePtr.asFunction<int Function(HANDLE, LPDWORD)>();
+
+  int SFileSetFilePointer(
+    HANDLE hFile,
+    int lFilePos,
+    ffi.Pointer<LONG> plFilePosHigh,
+    int dwMoveMethod,
+  ) {
+    return _SFileSetFilePointer(
+      hFile,
+      lFilePos,
+      plFilePosHigh,
+      dwMoveMethod,
+    );
+  }
+
+  late final _SFileSetFilePointerPtr = _lookup<
+      ffi.NativeFunction<
+          DWORD Function(
+              HANDLE, LONG, ffi.Pointer<LONG>, DWORD)>>('SFileSetFilePointer');
+  late final _SFileSetFilePointer = _SFileSetFilePointerPtr.asFunction<
+      int Function(HANDLE, int, ffi.Pointer<LONG>, int)>();
+
+  int SFileReadFile(
+    HANDLE hFile,
+    ffi.Pointer<ffi.Void> lpBuffer,
+    int dwToRead,
+    LPDWORD pdwRead,
+    LPOVERLAPPED lpOverlapped,
+  ) {
+    return _SFileReadFile(
+      hFile,
+      lpBuffer,
+      dwToRead,
+      pdwRead,
+      lpOverlapped,
+    );
+  }
+
+  late final _SFileReadFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Void>, DWORD, LPDWORD,
+              LPOVERLAPPED)>>('SFileReadFile');
+  late final _SFileReadFile = _SFileReadFilePtr.asFunction<
+      int Function(
+          HANDLE, ffi.Pointer<ffi.Void>, int, LPDWORD, LPOVERLAPPED)>();
+
+  int SFileCloseFile(
+    HANDLE hFile,
+  ) {
+    return _SFileCloseFile(
+      hFile,
+    );
+  }
+
+  late final _SFileCloseFilePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>('SFileCloseFile');
+  late final _SFileCloseFile =
+      _SFileCloseFilePtr.asFunction<int Function(HANDLE)>();
+
+  /// Retrieving info about a file in the archive
+  int SFileGetFileInfo(
+    HANDLE hMpqOrFile,
+    int InfoClass,
+    ffi.Pointer<ffi.Void> pvFileInfo,
+    int cbFileInfo,
+    LPDWORD pcbLengthNeeded,
+  ) {
+    return _SFileGetFileInfo(
+      hMpqOrFile,
+      InfoClass,
+      pvFileInfo,
+      cbFileInfo,
+      pcbLengthNeeded,
+    );
+  }
+
+  late final _SFileGetFileInfoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Int32, ffi.Pointer<ffi.Void>, DWORD,
+              LPDWORD)>>('SFileGetFileInfo');
+  late final _SFileGetFileInfo = _SFileGetFileInfoPtr.asFunction<
+      int Function(HANDLE, int, ffi.Pointer<ffi.Void>, int, LPDWORD)>();
+
+  int SFileGetFileName(
+    HANDLE hFile,
+    ffi.Pointer<ffi.Char> szFileName,
+  ) {
+    return _SFileGetFileName(
+      hFile,
+      szFileName,
+    );
+  }
+
+  late final _SFileGetFileNamePtr = _lookup<
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+      'SFileGetFileName');
+  late final _SFileGetFileName = _SFileGetFileNamePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+
+  int SFileFreeFileInfo(
+    ffi.Pointer<ffi.Void> pvFileInfo,
+    int InfoClass,
+  ) {
+    return _SFileFreeFileInfo(
+      pvFileInfo,
+      InfoClass,
+    );
+  }
+
+  late final _SFileFreeFileInfoPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              ffi.Pointer<ffi.Void>, ffi.Int32)>>('SFileFreeFileInfo');
+  late final _SFileFreeFileInfo = _SFileFreeFileInfoPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, int)>();
+
+  /// High-level extract function
+  int SFileExtractFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szToExtract,
+    ffi.Pointer<TCHAR> szExtracted,
+    int dwSearchScope,
+  ) {
+    return _SFileExtractFile(
+      hMpq,
+      szToExtract,
+      szExtracted,
+      dwSearchScope,
+    );
+  }
+
+  late final _SFileExtractFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<TCHAR>,
+              DWORD)>>('SFileExtractFile');
+  late final _SFileExtractFile = _SFileExtractFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<TCHAR>, int)>();
+
+  /// Generates file CRC32
+  int SFileGetFileChecksums(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+    LPDWORD pdwCrc32,
+    ffi.Pointer<ffi.Char> pMD5,
+  ) {
+    return _SFileGetFileChecksums(
+      hMpq,
+      szFileName,
+      pdwCrc32,
+      pMD5,
+    );
+  }
+
+  late final _SFileGetFileChecksumsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, LPDWORD,
+              ffi.Pointer<ffi.Char>)>>('SFileGetFileChecksums');
+  late final _SFileGetFileChecksums = _SFileGetFileChecksumsPtr.asFunction<
+      int Function(
+          HANDLE, ffi.Pointer<ffi.Char>, LPDWORD, ffi.Pointer<ffi.Char>)>();
+
+  /// Verifies file against its checksums stored in (attributes) attributes (depending on dwFlags).
+  /// For dwFlags, use one or more of MPQ_ATTRIBUTE_MD5
+  int SFileVerifyFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+    int dwFlags,
+  ) {
+    return _SFileVerifyFile(
+      hMpq,
+      szFileName,
+      dwFlags,
+    );
+  }
+
+  late final _SFileVerifyFilePtr = _lookup<
+      ffi.NativeFunction<
+          DWORD Function(
+              HANDLE, ffi.Pointer<ffi.Char>, DWORD)>>('SFileVerifyFile');
+  late final _SFileVerifyFile = _SFileVerifyFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, int)>();
+
+  /// Verifies raw data of the archive. Only works for MPQs version 4 or newer
+  int SFileVerifyRawData(
+    HANDLE hMpq,
+    int dwWhatToVerify,
+    ffi.Pointer<ffi.Char> szFileName,
+  ) {
+    return _SFileVerifyRawData(
+      hMpq,
+      dwWhatToVerify,
+      szFileName,
+    );
+  }
+
+  late final _SFileVerifyRawDataPtr = _lookup<
+      ffi.NativeFunction<
+          DWORD Function(
+              HANDLE, DWORD, ffi.Pointer<ffi.Char>)>>('SFileVerifyRawData');
+  late final _SFileVerifyRawData = _SFileVerifyRawDataPtr.asFunction<
+      int Function(HANDLE, int, ffi.Pointer<ffi.Char>)>();
+
+  /// Verifies the signature, if present
+  int SFileSignArchive(
+    HANDLE hMpq,
+    int dwSignatureType,
+  ) {
+    return _SFileSignArchive(
+      hMpq,
+      dwSignatureType,
+    );
+  }
+
+  late final _SFileSignArchivePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE, DWORD)>>(
+          'SFileSignArchive');
+  late final _SFileSignArchive =
+      _SFileSignArchivePtr.asFunction<int Function(HANDLE, int)>();
+
+  int SFileVerifyArchive(
+    HANDLE hMpq,
+  ) {
+    return _SFileVerifyArchive(
+      hMpq,
+    );
+  }
+
+  late final _SFileVerifyArchivePtr =
+      _lookup<ffi.NativeFunction<DWORD Function(HANDLE)>>('SFileVerifyArchive');
+  late final _SFileVerifyArchive =
+      _SFileVerifyArchivePtr.asFunction<int Function(HANDLE)>();
+
+  /// -----------------------------------------------------------------------------
+  /// Functions for file searching
+  HANDLE SFileFindFirstFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szMask,
+    ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
+    ffi.Pointer<TCHAR> szListFile,
+  ) {
+    return _SFileFindFirstFile(
+      hMpq,
+      szMask,
+      lpFindFileData,
+      szListFile,
+    );
+  }
+
+  late final _SFileFindFirstFilePtr = _lookup<
+      ffi.NativeFunction<
+          HANDLE Function(
+              HANDLE,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<SFILE_FIND_DATA>,
+              ffi.Pointer<TCHAR>)>>('SFileFindFirstFile');
+  late final _SFileFindFirstFile = _SFileFindFirstFilePtr.asFunction<
+      HANDLE Function(HANDLE, ffi.Pointer<ffi.Char>,
+          ffi.Pointer<SFILE_FIND_DATA>, ffi.Pointer<TCHAR>)>();
+
+  int SFileFindNextFile(
+    HANDLE hFind,
+    ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
+  ) {
+    return _SFileFindNextFile(
+      hFind,
+      lpFindFileData,
+    );
+  }
+
+  late final _SFileFindNextFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              HANDLE, ffi.Pointer<SFILE_FIND_DATA>)>>('SFileFindNextFile');
+  late final _SFileFindNextFile = _SFileFindNextFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<SFILE_FIND_DATA>)>();
+
+  int SFileFindClose(
+    HANDLE hFind,
+  ) {
+    return _SFileFindClose(
+      hFind,
+    );
+  }
+
+  late final _SFileFindClosePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>('SFileFindClose');
+  late final _SFileFindClose =
+      _SFileFindClosePtr.asFunction<int Function(HANDLE)>();
+
+  HANDLE SListFileFindFirstFile(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szListFile,
+    ffi.Pointer<ffi.Char> szMask,
+    ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
+  ) {
+    return _SListFileFindFirstFile(
+      hMpq,
+      szListFile,
+      szMask,
+      lpFindFileData,
+    );
+  }
+
+  late final _SListFileFindFirstFilePtr = _lookup<
+      ffi.NativeFunction<
+          HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+              ffi.Pointer<SFILE_FIND_DATA>)>>('SListFileFindFirstFile');
+  late final _SListFileFindFirstFile = _SListFileFindFirstFilePtr.asFunction<
+      HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          ffi.Pointer<SFILE_FIND_DATA>)>();
+
+  int SListFileFindNextFile(
+    HANDLE hFind,
+    ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
+  ) {
+    return _SListFileFindNextFile(
+      hFind,
+      lpFindFileData,
+    );
+  }
+
+  late final _SListFileFindNextFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              HANDLE, ffi.Pointer<SFILE_FIND_DATA>)>>('SListFileFindNextFile');
+  late final _SListFileFindNextFile = _SListFileFindNextFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<SFILE_FIND_DATA>)>();
+
+  int SListFileFindClose(
+    HANDLE hFind,
+  ) {
+    return _SListFileFindClose(
+      hFind,
+    );
+  }
+
+  late final _SListFileFindClosePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>(
+          'SListFileFindClose');
+  late final _SListFileFindClose =
+      _SListFileFindClosePtr.asFunction<int Function(HANDLE)>();
+
+  /// Locale support
+  int SFileEnumLocales(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<LCID> PtrFileLocales,
+    LPDWORD PtrMaxLocales,
+    int dwSearchScope,
+  ) {
+    return _SFileEnumLocales(
+      hMpq,
+      szFileName,
+      PtrFileLocales,
+      PtrMaxLocales,
+      dwSearchScope,
+    );
+  }
+
+  late final _SFileEnumLocalesPtr = _lookup<
+      ffi.NativeFunction<
+          DWORD Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<LCID>,
+              LPDWORD, DWORD)>>('SFileEnumLocales');
+  late final _SFileEnumLocales = _SFileEnumLocalesPtr.asFunction<
+      int Function(
+          HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<LCID>, LPDWORD, int)>();
+
+  /// -----------------------------------------------------------------------------
+  /// Support for adding files to the MPQ
+  int SFileCreateFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szArchivedName,
+    int FileTime,
+    int dwFileSize,
+    int lcFileLocale,
+    int dwFlags,
+    ffi.Pointer<HANDLE> phFile,
+  ) {
+    return _SFileCreateFile(
+      hMpq,
+      szArchivedName,
+      FileTime,
+      dwFileSize,
+      lcFileLocale,
+      dwFlags,
+      phFile,
+    );
+  }
+
+  late final _SFileCreateFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, ULONGLONG, DWORD,
+              LCID, DWORD, ffi.Pointer<HANDLE>)>>('SFileCreateFile');
+  late final _SFileCreateFile = _SFileCreateFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, int, int, int, int,
+          ffi.Pointer<HANDLE>)>();
+
+  int SFileWriteFile(
+    HANDLE hFile,
+    ffi.Pointer<ffi.Void> pvData,
+    int dwSize,
+    int dwCompression,
+  ) {
+    return _SFileWriteFile(
+      hFile,
+      pvData,
+      dwSize,
+      dwCompression,
+    );
+  }
+
+  late final _SFileWriteFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              HANDLE, ffi.Pointer<ffi.Void>, DWORD, DWORD)>>('SFileWriteFile');
+  late final _SFileWriteFile = _SFileWriteFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Void>, int, int)>();
+
+  int SFileFinishFile(
+    HANDLE hFile,
+  ) {
+    return _SFileFinishFile(
+      hFile,
+    );
+  }
+
+  late final _SFileFinishFilePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE)>>('SFileFinishFile');
+  late final _SFileFinishFile =
+      _SFileFinishFilePtr.asFunction<int Function(HANDLE)>();
+
+  int SFileAddFileEx(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szFileName,
+    ffi.Pointer<ffi.Char> szArchivedName,
+    int dwFlags,
+    int dwCompression,
+    int dwCompressionNext,
+  ) {
+    return _SFileAddFileEx(
+      hMpq,
+      szFileName,
+      szArchivedName,
+      dwFlags,
+      dwCompression,
+      dwCompressionNext,
+    );
+  }
+
+  late final _SFileAddFileExPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+              DWORD, DWORD, DWORD)>>('SFileAddFileEx');
+  late final _SFileAddFileEx = _SFileAddFileExPtr.asFunction<
+      int Function(
+          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int, int, int)>();
+
+  int SFileAddFile(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szFileName,
+    ffi.Pointer<ffi.Char> szArchivedName,
+    int dwFlags,
+  ) {
+    return _SFileAddFile(
+      hMpq,
+      szFileName,
+      szArchivedName,
+      dwFlags,
+    );
+  }
+
+  late final _SFileAddFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+              DWORD)>>('SFileAddFile');
+  late final _SFileAddFile = _SFileAddFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int)>();
+
+  int SFileAddWave(
+    HANDLE hMpq,
+    ffi.Pointer<TCHAR> szFileName,
+    ffi.Pointer<ffi.Char> szArchivedName,
+    int dwFlags,
+    int dwQuality,
+  ) {
+    return _SFileAddWave(
+      hMpq,
+      szFileName,
+      szArchivedName,
+      dwFlags,
+      dwQuality,
+    );
+  }
+
+  late final _SFileAddWavePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+              DWORD, DWORD)>>('SFileAddWave');
+  late final _SFileAddWave = _SFileAddWavePtr.asFunction<
+      int Function(
+          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int, int)>();
+
+  int SFileRemoveFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szFileName,
+    int dwSearchScope,
+  ) {
+    return _SFileRemoveFile(
+      hMpq,
+      szFileName,
+      dwSearchScope,
+    );
+  }
+
+  late final _SFileRemoveFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(
+              HANDLE, ffi.Pointer<ffi.Char>, DWORD)>>('SFileRemoveFile');
+  late final _SFileRemoveFile = _SFileRemoveFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, int)>();
+
+  int SFileRenameFile(
+    HANDLE hMpq,
+    ffi.Pointer<ffi.Char> szOldFileName,
+    ffi.Pointer<ffi.Char> szNewFileName,
+  ) {
+    return _SFileRenameFile(
+      hMpq,
+      szOldFileName,
+      szNewFileName,
+    );
+  }
+
+  late final _SFileRenameFilePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>)>>('SFileRenameFile');
+  late final _SFileRenameFile = _SFileRenameFilePtr.asFunction<
+      int Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+
+  int SFileSetFileLocale(
+    HANDLE hFile,
+    int lcNewLocale,
+  ) {
+    return _SFileSetFileLocale(
+      hFile,
+      lcNewLocale,
+    );
+  }
+
+  late final _SFileSetFileLocalePtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(HANDLE, LCID)>>(
+          'SFileSetFileLocale');
+  late final _SFileSetFileLocale =
+      _SFileSetFileLocalePtr.asFunction<int Function(HANDLE, int)>();
+
+  int SFileSetDataCompression(
+    int DataCompression,
+  ) {
+    return _SFileSetDataCompression(
+      DataCompression,
+    );
+  }
+
+  late final _SFileSetDataCompressionPtr =
+      _lookup<ffi.NativeFunction<ffi.Char Function(DWORD)>>(
+          'SFileSetDataCompression');
+  late final _SFileSetDataCompression =
+      _SFileSetDataCompressionPtr.asFunction<int Function(int)>();
+
+  int SFileSetAddFileCallback(
+    HANDLE hMpq,
+    SFILE_ADDFILE_CALLBACK AddFileCB,
+    ffi.Pointer<ffi.Void> pvUserData,
+  ) {
+    return _SFileSetAddFileCallback(
+      hMpq,
+      AddFileCB,
+      pvUserData,
+    );
+  }
+
+  late final _SFileSetAddFileCallbackPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Char Function(HANDLE, SFILE_ADDFILE_CALLBACK,
+              ffi.Pointer<ffi.Void>)>>('SFileSetAddFileCallback');
+  late final _SFileSetAddFileCallback = _SFileSetAddFileCallbackPtr.asFunction<
+      int Function(HANDLE, SFILE_ADDFILE_CALLBACK, ffi.Pointer<ffi.Void>)>();
+
+  /// -----------------------------------------------------------------------------
+  /// Compression and decompression
+  int SCompImplode(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+  ) {
+    return _SCompImplode(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+    );
+  }
+
+  late final _SCompImplodePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>, ffi.Int)>>('SCompImplode');
+  late final _SCompImplode = _SCompImplodePtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int SCompExplode(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+  ) {
+    return _SCompExplode(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+    );
+  }
+
+  late final _SCompExplodePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>, ffi.Int)>>('SCompExplode');
+  late final _SCompExplode = _SCompExplodePtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int SCompCompress(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+    int uCompressionMask,
+    int nCmpType,
+    int nCmpLevel,
+  ) {
+    return _SCompCompress(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+      uCompressionMask,
+      nCmpType,
+      nCmpLevel,
+    );
+  }
+
+  late final _SCompCompressPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Int,
+              ffi.UnsignedInt,
+              ffi.Int,
+              ffi.Int)>>('SCompCompress');
+  late final _SCompCompress = _SCompCompressPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int, int, int, int)>();
+
+  int SCompDecompress(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+  ) {
+    return _SCompDecompress(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+    );
+  }
+
+  late final _SCompDecompressPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>, ffi.Int)>>('SCompDecompress');
+  late final _SCompDecompress = _SCompDecompressPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int SCompDecompress2(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+  ) {
+    return _SCompDecompress2(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+    );
+  }
+
+  late final _SCompDecompress2Ptr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>, ffi.Int)>>('SCompDecompress2');
+  late final _SCompDecompress2 = _SCompDecompress2Ptr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  int SCompDecompress_SC1B(
+    ffi.Pointer<ffi.Void> pvOutBuffer,
+    ffi.Pointer<ffi.Int> pcbOutBuffer,
+    ffi.Pointer<ffi.Void> pvInBuffer,
+    int cbInBuffer,
+  ) {
+    return _SCompDecompress_SC1B(
+      pvOutBuffer,
+      pcbOutBuffer,
+      pvInBuffer,
+      cbInBuffer,
+    );
+  }
+
+  late final _SCompDecompress_SC1BPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+              ffi.Pointer<ffi.Void>, ffi.Int)>>('SCompDecompress_SC1B');
+  late final _SCompDecompress_SC1B = _SCompDecompress_SC1BPtr.asFunction<
+      int Function(ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Int>,
+          ffi.Pointer<ffi.Void>, int)>();
+
+  void SetLastError(
+    int dwErrCode,
+  ) {
+    return _SetLastError(
+      dwErrCode,
+    );
+  }
+
+  late final _SetLastErrorPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(DWORD)>>('SetLastError');
+  late final _SetLastError = _SetLastErrorPtr.asFunction<void Function(int)>();
+
+  int GetLastError() {
+    return _GetLastError();
+  }
+
+  late final _GetLastErrorPtr =
+      _lookup<ffi.NativeFunction<DWORD Function()>>('GetLastError');
+  late final _GetLastError = _GetLastErrorPtr.asFunction<int Function()>();
 }
+
+/// -----------------------------------------------------------------------------
+/// File information classes for SFileGetFileInfo and SFileFreeFileInfo
+abstract class _SFileInfoClass {
+  /// Name of the archive file (TCHAR [])
+  static const int SFileMpqFileName = 0;
+
+  /// Array of bits, each bit means availability of one block (BYTE [])
+  static const int SFileMpqStreamBitmap = 1;
+
+  /// Offset of the user data header (ULONGLONG)
+  static const int SFileMpqUserDataOffset = 2;
+
+  /// Raw (unfixed) user data header (TMPQUserData)
+  static const int SFileMpqUserDataHeader = 3;
+
+  /// MPQ USer data, without the header (BYTE [])
+  static const int SFileMpqUserData = 4;
+
+  /// Offset of the MPQ header (ULONGLONG)
+  static const int SFileMpqHeaderOffset = 5;
+
+  /// Fixed size of the MPQ header
+  static const int SFileMpqHeaderSize = 6;
+
+  /// Raw (unfixed) archive header (TMPQHeader)
+  static const int SFileMpqHeader = 7;
+
+  /// Offset of the HET table, relative to MPQ header (ULONGLONG)
+  static const int SFileMpqHetTableOffset = 8;
+
+  /// Compressed size of the HET table (ULONGLONG)
+  static const int SFileMpqHetTableSize = 9;
+
+  /// HET table header (TMPQHetHeader)
+  static const int SFileMpqHetHeader = 10;
+
+  /// HET table as pointer. Must be freed using SFileFreeFileInfo
+  static const int SFileMpqHetTable = 11;
+
+  /// Offset of the BET table, relative to MPQ header (ULONGLONG)
+  static const int SFileMpqBetTableOffset = 12;
+
+  /// Compressed size of the BET table (ULONGLONG)
+  static const int SFileMpqBetTableSize = 13;
+
+  /// BET table header, followed by the flags (TMPQBetHeader + DWORD[])
+  static const int SFileMpqBetHeader = 14;
+
+  /// BET table as pointer. Must be freed using SFileFreeFileInfo
+  static const int SFileMpqBetTable = 15;
+
+  /// Hash table offset, relative to MPQ header (ULONGLONG)
+  static const int SFileMpqHashTableOffset = 16;
+
+  /// Compressed size of the hash table (ULONGLONG)
+  static const int SFileMpqHashTableSize64 = 17;
+
+  /// Size of the hash table, in entries (DWORD)
+  static const int SFileMpqHashTableSize = 18;
+
+  /// Raw (unfixed) hash table (TMPQBlock [])
+  static const int SFileMpqHashTable = 19;
+
+  /// Block table offset, relative to MPQ header (ULONGLONG)
+  static const int SFileMpqBlockTableOffset = 20;
+
+  /// Compressed size of the block table (ULONGLONG)
+  static const int SFileMpqBlockTableSize64 = 21;
+
+  /// Size of the block table, in entries (DWORD)
+  static const int SFileMpqBlockTableSize = 22;
+
+  /// Raw (unfixed) block table (TMPQBlock [])
+  static const int SFileMpqBlockTable = 23;
+
+  /// Hi-block table offset, relative to MPQ header (ULONGLONG)
+  static const int SFileMpqHiBlockTableOffset = 24;
+
+  /// Compressed size of the hi-block table (ULONGLONG)
+  static const int SFileMpqHiBlockTableSize64 = 25;
+
+  /// The hi-block table (USHORT [])
+  static const int SFileMpqHiBlockTable = 26;
+
+  /// Signatures present in the MPQ (DWORD)
+  static const int SFileMpqSignatures = 27;
+
+  /// Byte offset of the strong signature, relative to begin of the file (ULONGLONG)
+  static const int SFileMpqStrongSignatureOffset = 28;
+
+  /// Size of the strong signature (DWORD)
+  static const int SFileMpqStrongSignatureSize = 29;
+
+  /// The strong signature (BYTE [])
+  static const int SFileMpqStrongSignature = 30;
+
+  /// Archive size from the header (ULONGLONG)
+  static const int SFileMpqArchiveSize64 = 31;
+
+  /// Archive size from the header (DWORD)
+  static const int SFileMpqArchiveSize = 32;
+
+  /// Max number of files in the archive (DWORD)
+  static const int SFileMpqMaxFileCount = 33;
+
+  /// Number of entries in the file table (DWORD)
+  static const int SFileMpqFileTableSize = 34;
+
+  /// Sector size (DWORD)
+  static const int SFileMpqSectorSize = 35;
+
+  /// Number of files (DWORD)
+  static const int SFileMpqNumberOfFiles = 36;
+
+  /// Size of the raw data chunk for MD5
+  static const int SFileMpqRawChunkSize = 37;
+
+  /// Stream flags (DWORD)
+  static const int SFileMpqStreamFlags = 38;
+
+  /// Nonzero if the MPQ is read only (DWORD)
+  static const int SFileMpqFlags = 39;
+
+  /// Chain of patches where the file is (TCHAR [])
+  static const int SFileInfoPatchChain = 40;
+
+  /// The file entry for the file (TFileEntry)
+  static const int SFileInfoFileEntry = 41;
+
+  /// Hash table entry for the file (TMPQHash)
+  static const int SFileInfoHashEntry = 42;
+
+  /// Index of the hash table entry (DWORD)
+  static const int SFileInfoHashIndex = 43;
+
+  /// The first name hash in the hash table (DWORD)
+  static const int SFileInfoNameHash1 = 44;
+
+  /// The second name hash in the hash table (DWORD)
+  static const int SFileInfoNameHash2 = 45;
+
+  /// 64-bit file name hash for the HET/BET tables (ULONGLONG)
+  static const int SFileInfoNameHash3 = 46;
+
+  /// File locale (DWORD)
+  static const int SFileInfoLocale = 47;
+
+  /// Block index (DWORD)
+  static const int SFileInfoFileIndex = 48;
+
+  /// File position in the archive (ULONGLONG)
+  static const int SFileInfoByteOffset = 49;
+
+  /// File time (ULONGLONG)
+  static const int SFileInfoFileTime = 50;
+
+  /// Size of the file (DWORD)
+  static const int SFileInfoFileSize = 51;
+
+  /// Compressed file size (DWORD)
+  static const int SFileInfoCompressedSize = 52;
+
+  /// File flags from (DWORD)
+  static const int SFileInfoFlags = 53;
+
+  /// File encryption key
+  static const int SFileInfoEncryptionKey = 54;
+
+  /// Unfixed value of the file key
+  static const int SFileInfoEncryptionKeyRaw = 55;
+
+  /// CRC32 of the file
+  static const int SFileInfoCRC32 = 56;
+}
+
+class TFileStream extends ffi.Opaque {}
+
+class TMPQBits extends ffi.Opaque {}
+
+class _TMPQUserData extends ffi.Struct {
+  /// The ID_MPQ_USERDATA ('MPQ\x1B') signature
+  @DWORD()
+  external int dwID;
+
+  /// Maximum size of the user data
+  @DWORD()
+  external int cbUserDataSize;
+
+  /// Offset of the MPQ header, relative to the begin of this header
+  @DWORD()
+  external int dwHeaderOffs;
+
+  /// Appears to be size of user data header (Starcraft II maps)
+  @DWORD()
+  external int cbUserDataHeader;
+}
+
+typedef DWORD = ffi.UnsignedInt;
+
+@ffi.Packed(1)
+class _TMPQHeader extends ffi.Struct {
+  /// The ID_MPQ ('MPQ\x1A') signature
+  @DWORD()
+  external int dwID;
+
+  /// Size of the archive header
+  @DWORD()
+  external int dwHeaderSize;
+
+  /// 32-bit size of MPQ archive
+  /// This field is deprecated in the Burning Crusade MoPaQ format, and the size of the archive
+  /// is calculated as the size from the beginning of the archive to the end of the hash table,
+  /// block table, or hi-block table (whichever is largest).
+  @DWORD()
+  external int dwArchiveSize;
+
+  /// 0 = Format 1 (up to The Burning Crusade)
+  /// 1 = Format 2 (The Burning Crusade and newer)
+  /// 2 = Format 3 (WoW - Cataclysm beta or newer)
+  /// 3 = Format 4 (WoW - Cataclysm beta or newer)
+  @USHORT()
+  external int wFormatVersion;
+
+  /// Power of two exponent specifying the number of 512-byte disk sectors in each file sector
+  /// in the archive. The size of each file sector in the archive is 512 * 2 ^ wSectorSize.
+  @USHORT()
+  external int wSectorSize;
+
+  /// Offset to the beginning of the hash table, relative to the beginning of the archive.
+  @DWORD()
+  external int dwHashTablePos;
+
+  /// Offset to the beginning of the block table, relative to the beginning of the archive.
+  @DWORD()
+  external int dwBlockTablePos;
+
+  /// Number of entries in the hash table. Must be a power of two, and must be less than 2^16 for
+  /// the original MoPaQ format, or less than 2^20 for the Burning Crusade format.
+  @DWORD()
+  external int dwHashTableSize;
+
+  /// Number of entries in the block table
+  @DWORD()
+  external int dwBlockTableSize;
+
+  /// Offset to the beginning of array of 16-bit high parts of file offsets.
+  @ULONGLONG()
+  external int HiBlockTablePos64;
+
+  /// High 16 bits of the hash table offset for large archives.
+  @USHORT()
+  external int wHashTablePosHi;
+
+  /// High 16 bits of the block table offset for large archives.
+  @USHORT()
+  external int wBlockTablePosHi;
+
+  /// 64-bit version of the archive size
+  @ULONGLONG()
+  external int ArchiveSize64;
+
+  /// 64-bit position of the BET table
+  @ULONGLONG()
+  external int BetTablePos64;
+
+  /// 64-bit position of the HET table
+  @ULONGLONG()
+  external int HetTablePos64;
+
+  /// Compressed size of the hash table
+  @ULONGLONG()
+  external int HashTableSize64;
+
+  /// Compressed size of the block table
+  @ULONGLONG()
+  external int BlockTableSize64;
+
+  /// Compressed size of the hi-block table
+  @ULONGLONG()
+  external int HiBlockTableSize64;
+
+  /// Compressed size of the HET block
+  @ULONGLONG()
+  external int HetTableSize64;
+
+  /// Compressed size of the BET block
+  @ULONGLONG()
+  external int BetTableSize64;
+
+  /// Size of raw data chunk to calculate MD5.
+  /// MD5 of each data chunk follows the raw file data.
+  @DWORD()
+  external int dwRawChunkSize;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_BlockTable;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_HashTable;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_HiBlockTable;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_BetTable;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_HetTable;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<ffi.UnsignedChar> MD5_MpqHeader;
+}
+
+typedef USHORT = ffi.UnsignedShort;
+typedef ULONGLONG = ffi.UnsignedLongLong;
+
+/// Hash table entry. All files in the archive are searched by their hashes.
+class _TMPQHash extends ffi.Struct {
+  /// The hash of the file path, using method A.
+  @DWORD()
+  external int dwName1;
+
+  /// The hash of the file path, using method B.
+  @DWORD()
+  external int dwName2;
+
+  /// The language of the file. This is a Windows LANGID data type, and uses the same values.
+  /// 0 indicates the default language (American English), or that the file is language-neutral.
+  @USHORT()
+  external int Locale;
+
+  /// The platform the file is used for. 0 indicates the default platform.
+  /// No other values have been observed.
+  @BYTE()
+  external int Platform;
+
+  @BYTE()
+  external int Reserved;
+
+  /// If the hash table entry is valid, this is the index into the block table of the file.
+  /// Otherwise, one of the following two values:
+  /// - FFFFFFFFh: Hash table entry is empty, and has always been empty.
+  /// Terminates searches for a given file.
+  /// - FFFFFFFEh: Hash table entry is empty, but was valid at some point (a deleted file).
+  /// Does not terminate searches for a given file.
+  @DWORD()
+  external int dwBlockIndex;
+}
+
+/// Typedefs for ANSI C
+typedef BYTE = ffi.UnsignedChar;
+
+/// File description block contains informations about the file
+class _TMPQBlock extends ffi.Struct {
+  /// Offset of the beginning of the file, relative to the beginning of the archive.
+  @DWORD()
+  external int dwFilePos;
+
+  /// Compressed file size
+  @DWORD()
+  external int dwCSize;
+
+  /// Only valid if the block is a file; otherwise meaningless, and should be 0.
+  /// If the file is compressed, this is the size of the uncompressed file data.
+  @DWORD()
+  external int dwFSize;
+
+  /// Flags for the file. See MPQ_FILE_XXXX constants
+  @DWORD()
+  external int dwFlags;
+}
+
+/// Patch file information, preceding the sector offset table
+class _TPatchInfo extends ffi.Struct {
+  /// Length of patch info header, in bytes
+  @DWORD()
+  external int dwLength;
+
+  /// Flags. 0x80000000 = MD5 (?)
+  @DWORD()
+  external int dwFlags;
+
+  /// Uncompressed size of the patch file
+  @DWORD()
+  external int dwDataSize;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<BYTE> md5;
+}
+
+/// This is the combined file entry for maintaining file list in the MPQ.
+/// This structure is combined from block table, hi-block table,
+/// (attributes) file and from (listfile).
+class _TFileEntry extends ffi.Struct {
+  /// Jenkins hash of the file name. Only used when the MPQ has BET table.
+  @ULONGLONG()
+  external int FileNameHash;
+
+  /// Position of the file content in the MPQ, relative to the MPQ header
+  @ULONGLONG()
+  external int ByteOffset;
+
+  /// FileTime from the (attributes) file. 0 if not present.
+  @ULONGLONG()
+  external int FileTime;
+
+  /// Decompressed size of the file
+  @DWORD()
+  external int dwFileSize;
+
+  /// Compressed size of the file (i.e., size of the file data in the MPQ)
+  @DWORD()
+  external int dwCmpSize;
+
+  /// File flags (from block table)
+  @DWORD()
+  external int dwFlags;
+
+  /// CRC32 from (attributes) file. 0 if not present.
+  @DWORD()
+  external int dwCrc32;
+
+  @ffi.Array.multi([16])
+  external ffi.Array<BYTE> md5;
+
+  /// File name. NULL if not known.
+  external ffi.Pointer<ffi.Char> szFileName;
+}
+
+/// Common header for HET and BET tables
+class _TMPQExtHeader extends ffi.Struct {
+  /// 'HET\x1A' or 'BET\x1A'
+  @DWORD()
+  external int dwSignature;
+
+  /// Version. Seems to be always 1
+  @DWORD()
+  external int dwVersion;
+
+  /// Size of the contained table
+  @DWORD()
+  external int dwDataSize;
+}
+
+/// Structure for HET table header
+class _TMPQHetHeader extends ffi.Struct {
+  external TMPQExtHeader ExtHdr;
+
+  /// Size of the entire HET table, including HET_TABLE_HEADER (in bytes)
+  @DWORD()
+  external int dwTableSize;
+
+  /// Number of occupied entries in the HET table
+  @DWORD()
+  external int dwEntryCount;
+
+  /// Total number of entries in the HET table
+  @DWORD()
+  external int dwTotalCount;
+
+  /// Size of the name hash entry (in bits)
+  @DWORD()
+  external int dwNameHashBitSize;
+
+  /// Total size of file index (in bits)
+  @DWORD()
+  external int dwIndexSizeTotal;
+
+  /// Extra bits in the file index
+  @DWORD()
+  external int dwIndexSizeExtra;
+
+  /// Effective size of the file index (in bits)
+  @DWORD()
+  external int dwIndexSize;
+
+  /// Size of the block index subtable (in bytes)
+  @DWORD()
+  external int dwIndexTableSize;
+}
+
+/// Common header for HET and BET tables
+typedef TMPQExtHeader = _TMPQExtHeader;
+
+/// Structure for BET table header
+class _TMPQBetHeader extends ffi.Struct {
+  external TMPQExtHeader ExtHdr;
+
+  /// Size of the entire BET table, including the header (in bytes)
+  @DWORD()
+  external int dwTableSize;
+
+  /// Number of entries in the BET table. Must match HET_TABLE_HEADER::dwEntryCount
+  @DWORD()
+  external int dwEntryCount;
+
+  @DWORD()
+  external int dwUnknown08;
+
+  /// Size of one table entry (in bits)
+  @DWORD()
+  external int dwTableEntrySize;
+
+  /// Bit index of the file position (within the entry record)
+  @DWORD()
+  external int dwBitIndex_FilePos;
+
+  /// Bit index of the file size (within the entry record)
+  @DWORD()
+  external int dwBitIndex_FileSize;
+
+  /// Bit index of the compressed size (within the entry record)
+  @DWORD()
+  external int dwBitIndex_CmpSize;
+
+  /// Bit index of the flag index (within the entry record)
+  @DWORD()
+  external int dwBitIndex_FlagIndex;
+
+  /// Bit index of the ??? (within the entry record)
+  @DWORD()
+  external int dwBitIndex_Unknown;
+
+  /// Bit size of file position (in the entry record)
+  @DWORD()
+  external int dwBitCount_FilePos;
+
+  /// Bit size of file size (in the entry record)
+  @DWORD()
+  external int dwBitCount_FileSize;
+
+  /// Bit size of compressed file size (in the entry record)
+  @DWORD()
+  external int dwBitCount_CmpSize;
+
+  /// Bit size of flags index (in the entry record)
+  @DWORD()
+  external int dwBitCount_FlagIndex;
+
+  /// Bit size of ??? (in the entry record)
+  @DWORD()
+  external int dwBitCount_Unknown;
+
+  /// Total bit size of the NameHash2
+  @DWORD()
+  external int dwBitTotal_NameHash2;
+
+  /// Extra bits in the NameHash2
+  @DWORD()
+  external int dwBitExtra_NameHash2;
+
+  /// Effective size of NameHash2 (in bits)
+  @DWORD()
+  external int dwBitCount_NameHash2;
+
+  /// Size of NameHash2 table, in bytes
+  @DWORD()
+  external int dwNameHashArraySize;
+
+  /// Number of flags in the following array
+  @DWORD()
+  external int dwFlagCount;
+}
+
+/// Structure for parsed HET table
+class _TMPQHetTable extends ffi.Struct {
+  /// Bit array of FileIndex values
+  external ffi.Pointer<TMPQBits> pBetIndexes;
+
+  /// Array of NameHash1 values (NameHash1 = upper 8 bits of FileName hashe)
+  external LPBYTE pNameHashes;
+
+  /// AND mask used for calculating file name hash
+  @ULONGLONG()
+  external int AndMask64;
+
+  /// OR mask used for setting the highest bit of the file name hash
+  @ULONGLONG()
+  external int OrMask64;
+
+  /// Number of occupied entries in the HET table
+  @DWORD()
+  external int dwEntryCount;
+
+  /// Number of entries in both NameHash and FileIndex table
+  @DWORD()
+  external int dwTotalCount;
+
+  /// Size of the name hash entry (in bits)
+  @DWORD()
+  external int dwNameHashBitSize;
+
+  /// Total size of one entry in pBetIndexes (in bits)
+  @DWORD()
+  external int dwIndexSizeTotal;
+
+  /// Extra bits in the entry in pBetIndexes
+  @DWORD()
+  external int dwIndexSizeExtra;
+
+  /// Effective size of one entry in pBetIndexes (in bits)
+  @DWORD()
+  external int dwIndexSize;
+}
+
+typedef LPBYTE = ffi.Pointer<BYTE>;
+
+/// Structure for parsed BET table
+class _TMPQBetTable extends ffi.Struct {
+  /// Array of NameHash2 entries (lower 24 bits of FileName hash)
+  external ffi.Pointer<TMPQBits> pNameHashes;
+
+  /// Bit-based file table
+  external ffi.Pointer<TMPQBits> pFileTable;
+
+  /// Array of file flags
+  external LPDWORD pFileFlags;
+
+  /// Size of one table entry, in bits
+  @DWORD()
+  external int dwTableEntrySize;
+
+  /// Bit index of the file position in the table entry
+  @DWORD()
+  external int dwBitIndex_FilePos;
+
+  /// Bit index of the file size in the table entry
+  @DWORD()
+  external int dwBitIndex_FileSize;
+
+  /// Bit index of the compressed size in the table entry
+  @DWORD()
+  external int dwBitIndex_CmpSize;
+
+  /// Bit index of the flag index in the table entry
+  @DWORD()
+  external int dwBitIndex_FlagIndex;
+
+  /// Bit index of ??? in the table entry
+  @DWORD()
+  external int dwBitIndex_Unknown;
+
+  /// Size of file offset (in bits) within table entry
+  @DWORD()
+  external int dwBitCount_FilePos;
+
+  /// Size of file size (in bits) within table entry
+  @DWORD()
+  external int dwBitCount_FileSize;
+
+  /// Size of compressed file size (in bits) within table entry
+  @DWORD()
+  external int dwBitCount_CmpSize;
+
+  /// Size of flag index (in bits) within table entry
+  @DWORD()
+  external int dwBitCount_FlagIndex;
+
+  /// Size of ??? (in bits) within table entry
+  @DWORD()
+  external int dwBitCount_Unknown;
+
+  /// Total size of the NameHash2
+  @DWORD()
+  external int dwBitTotal_NameHash2;
+
+  /// Extra bits in the NameHash2
+  @DWORD()
+  external int dwBitExtra_NameHash2;
+
+  /// Effective size of the NameHash2
+  @DWORD()
+  external int dwBitCount_NameHash2;
+
+  /// Number of entries
+  @DWORD()
+  external int dwEntryCount;
+
+  /// Number of file flags in pFileFlags
+  @DWORD()
+  external int dwFlagCount;
+}
+
+typedef LPDWORD = ffi.Pointer<DWORD>;
+
+/// Structure for patch prefix
+class _TMPQNamePrefix extends ffi.Struct {
+  /// Length of this patch prefix. Can be 0
+  @ffi.Size()
+  external int nLength;
+
+  @ffi.Array.multi([1])
+  external ffi.Array<ffi.Char> szPatchPrefix;
+}
+
+/// Structure for name cache
+class _TMPQNameCache extends ffi.Struct {
+  /// Offset of the first name in the name list (in bytes)
+  @DWORD()
+  external int FirstNameOffset;
+
+  /// Offset of the first free byte in the name cache (in bytes)
+  @DWORD()
+  external int FreeSpaceOffset;
+
+  /// Size, in bytes, of the cache. Includes wildcard
+  @DWORD()
+  external int TotalCacheSize;
+
+  /// Used by SListFileFindFirstFile
+  @DWORD()
+  external int SearchOffset;
+}
+
+/// Archive handle structure
+class _TMPQArchive extends ffi.Struct {
+  /// Open stream for the MPQ
+  external ffi.Pointer<TFileStream> pStream;
+
+  /// Position of user data (relative to the begin of the file)
+  @ULONGLONG()
+  external int UserDataPos;
+
+  /// MPQ header offset (relative to the begin of the file)
+  @ULONGLONG()
+  external int MpqPos;
+
+  /// Size of the file at the moment of file open
+  @ULONGLONG()
+  external int FileSize;
+
+  /// Pointer to patch archive, if any
+  external ffi.Pointer<_TMPQArchive> haPatch;
+
+  /// Pointer to base ("previous version") archive, if any
+  external ffi.Pointer<_TMPQArchive> haBase;
+
+  /// Patch prefix to precede names of patch files
+  external ffi.Pointer<TMPQNamePrefix> pPatchPrefix;
+
+  /// MPQ user data (NULL if not present in the file)
+  external ffi.Pointer<TMPQUserData> pUserData;
+
+  /// MPQ file header
+  external ffi.Pointer<TMPQHeader> pHeader;
+
+  /// Hash table
+  external ffi.Pointer<TMPQHash> pHashTable;
+
+  /// HET table
+  external ffi.Pointer<TMPQHetTable> pHetTable;
+
+  /// File table
+  external ffi.Pointer<TFileEntry> pFileTable;
+
+  /// Hashing function that will convert the file name into hash
+  external HASH_STRING pfnHashString;
+
+  /// MPQ user data. Valid only when ID_MPQ_USERDATA has been found
+  external TMPQUserData UserData;
+
+  @ffi.Array.multi([52])
+  external ffi.Array<DWORD> HeaderData;
+
+  @DWORD()
+  external int dwHETBlockSize;
+
+  @DWORD()
+  external int dwBETBlockSize;
+
+  /// Maximum number of files in the MPQ. Also total size of the file table.
+  @DWORD()
+  external int dwMaxFileCount;
+
+  /// Current size of the file table, e.g. index of the entry past the last occupied one
+  @DWORD()
+  external int dwFileTableSize;
+
+  /// Number of entries reserved for internal MPQ files (listfile, attributes)
+  @DWORD()
+  external int dwReservedFiles;
+
+  /// Default size of one file sector
+  @DWORD()
+  external int dwSectorSize;
+
+  /// Flags for (listfile)
+  @DWORD()
+  external int dwFileFlags1;
+
+  /// Flags for (attributes)
+  @DWORD()
+  external int dwFileFlags2;
+
+  /// Flags for (signature)
+  @DWORD()
+  external int dwFileFlags3;
+
+  /// Flags for the (attributes) file, see MPQ_ATTRIBUTE_XXX
+  @DWORD()
+  external int dwAttrFlags;
+
+  /// Valid flags for the current MPQ
+  @DWORD()
+  external int dwValidFileFlags;
+
+  /// Real size of the hash table, if MPQ_FLAG_HASH_TABLE_CUT is zet in dwFlags
+  @DWORD()
+  external int dwRealHashTableSize;
+
+  /// See MPQ_FLAG_XXXXX
+  @DWORD()
+  external int dwFlags;
+
+  /// See MPQ_SUBTYPE_XXX
+  @DWORD()
+  external int dwSubType;
+
+  /// Callback function for adding files
+  external SFILE_ADDFILE_CALLBACK pfnAddFileCB;
+
+  /// User data thats passed to the callback
+  external ffi.Pointer<ffi.Void> pvAddFileUserData;
+
+  /// Callback function for compacting the archive
+  external SFILE_COMPACT_CALLBACK pfnCompactCB;
+
+  /// Amount of bytes that have been processed during a particular compact call
+  @ULONGLONG()
+  external int CompactBytesProcessed;
+
+  /// Total amount of bytes to be compacted
+  @ULONGLONG()
+  external int CompactTotalBytes;
+
+  /// User data thats passed to the callback
+  external ffi.Pointer<ffi.Void> pvCompactUserData;
+}
+
+/// Structure for patch prefix
+typedef TMPQNamePrefix = _TMPQNamePrefix;
+typedef TMPQUserData = _TMPQUserData;
+typedef TMPQHeader = _TMPQHeader;
+
+/// Hash table entry. All files in the archive are searched by their hashes.
+typedef TMPQHash = _TMPQHash;
+
+/// Structure for parsed HET table
+typedef TMPQHetTable = _TMPQHetTable;
+
+/// This is the combined file entry for maintaining file list in the MPQ.
+/// This structure is combined from block table, hi-block table,
+/// (attributes) file and from (listfile).
+typedef TFileEntry = _TFileEntry;
+
+/// Pointer to hashing function
+typedef HASH_STRING = ffi
+    .Pointer<ffi.NativeFunction<DWORD Function(ffi.Pointer<ffi.Char>, DWORD)>>;
+typedef SFILE_ADDFILE_CALLBACK = ffi.Pointer<
+    ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<ffi.Void>, DWORD, DWORD, ffi.Char)>>;
+typedef SFILE_COMPACT_CALLBACK = ffi.Pointer<
+    ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<ffi.Void>, DWORD, ULONGLONG, ULONGLONG)>>;
+
+/// File handle structure
+class _TMPQFile extends ffi.Struct {
+  /// File stream. Only used on local files
+  external ffi.Pointer<TFileStream> pStream;
+
+  /// Archive handle
+  external ffi.Pointer<TMPQArchive> ha;
+
+  /// Pointer to hash table entry, if the file was open using hash table
+  external ffi.Pointer<TMPQHash> pHashEntry;
+
+  /// File entry for the file
+  external ffi.Pointer<TFileEntry> pFileEntry;
+
+  /// Offset in MPQ archive (relative to file begin)
+  @ULONGLONG()
+  external int RawFilePos;
+
+  /// Offset in MPQ archive (relative to MPQ header)
+  @ULONGLONG()
+  external int MpqFilePos;
+
+  /// Hash table index (0xFFFFFFFF if not used)
+  @DWORD()
+  external int dwHashIndex;
+
+  /// Decryption key
+  @DWORD()
+  external int dwFileKey;
+
+  /// Current file position
+  @DWORD()
+  external int dwFilePos;
+
+  /// 'FILE'
+  @DWORD()
+  external int dwMagic;
+
+  /// Pointer to opened patch file
+  external ffi.Pointer<_TMPQFile> hfPatch;
+
+  /// Patch info block, preceding the sector table
+  external ffi.Pointer<TPatchInfo> pPatchInfo;
+
+  /// Position of each file sector, relative to the begin of the file. Only for compressed files.
+  external LPDWORD SectorOffsets;
+
+  /// Array of sector checksums (either ADLER32 or MD5) values for each file sector
+  external LPDWORD SectorChksums;
+
+  /// Data of the file (single unit files, patched files)
+  external LPBYTE pbFileData;
+
+  /// Size of file data
+  @DWORD()
+  external int cbFileData;
+
+  /// Compression that will be used on the first file sector
+  @DWORD()
+  external int dwCompression0;
+
+  /// Number of sectors in the file
+  @DWORD()
+  external int dwSectorCount;
+
+  /// Size of patched file. Used when saving patch file to the MPQ
+  @DWORD()
+  external int dwPatchedFileSize;
+
+  /// Size of data in the file (on patch files, this differs from file size in block table entry)
+  @DWORD()
+  external int dwDataSize;
+
+  /// Last loaded file sector. For single unit files, entire file content
+  external LPBYTE pbFileSector;
+
+  /// File position of currently loaded file sector
+  @DWORD()
+  external int dwSectorOffs;
+
+  /// Size of the file sector. For single unit files, this is equal to the file size
+  @DWORD()
+  external int dwSectorSize;
+
+  /// Hash state for MD5. Used when saving file to MPQ
+  external ffi.Pointer<ffi.Void> hctx;
+
+  /// CRC32 value, used when saving file to MPQ
+  @DWORD()
+  external int dwCrc32;
+
+  /// Result of the "Add File" operations
+  @DWORD()
+  external int dwAddFileError;
+
+  /// If true, we already tried to load sector CRCs
+  @ffi.Char()
+  external int bLoadedSectorCRCs;
+
+  /// If true, then SFileReadFile will check sector CRCs when reading the file
+  @ffi.Char()
+  external int bCheckSectorCRCs;
+
+  /// If true, this handle has been created by SFileCreateFile
+  @ffi.Char()
+  external int bIsWriteHandle;
+}
+
+/// Archive handle structure
+typedef TMPQArchive = _TMPQArchive;
+
+/// Patch file information, preceding the sector offset table
+typedef TPatchInfo = _TPatchInfo;
+
+/// Structure for SFileFindFirstFile and SFileFindNextFile
+class _SFILE_FIND_DATA extends ffi.Struct {
+  @ffi.Array.multi([1024])
+  external ffi.Array<ffi.Char> cFileName;
+
+  /// Plain name of the found file
+  external ffi.Pointer<ffi.Char> szPlainName;
+
+  /// Hash table index for the file (HAH_ENTRY_FREE if no hash table)
+  @DWORD()
+  external int dwHashIndex;
+
+  /// Block table index for the file
+  @DWORD()
+  external int dwBlockIndex;
+
+  /// File size in bytes
+  @DWORD()
+  external int dwFileSize;
+
+  /// MPQ file flags
+  @DWORD()
+  external int dwFileFlags;
+
+  /// Compressed file size
+  @DWORD()
+  external int dwCompSize;
+
+  /// Low 32-bits of the file time (0 if not present)
+  @DWORD()
+  external int dwFileTimeLo;
+
+  /// High 32-bits of the file time (0 if not present)
+  @DWORD()
+  external int dwFileTimeHi;
+
+  /// Compound of file locale (16 bits) and platform (8 bits)
+  @LCID()
+  external int lcLocale;
+}
+
+typedef LCID = ffi.UnsignedInt;
+
+class _SFILE_CREATE_MPQ extends ffi.Struct {
+  /// Size of this structure, in bytes
+  @DWORD()
+  external int cbSize;
+
+  /// Version of the MPQ to be created
+  @DWORD()
+  external int dwMpqVersion;
+
+  /// Reserved, must be NULL
+  external ffi.Pointer<ffi.Void> pvUserData;
+
+  /// Reserved, must be 0
+  @DWORD()
+  external int cbUserData;
+
+  /// Stream flags for creating the MPQ
+  @DWORD()
+  external int dwStreamFlags;
+
+  /// File flags for (listfile). Use MPQ_FILE_DEFAULT_INTERNAL to set default flags
+  @DWORD()
+  external int dwFileFlags1;
+
+  /// File flags for (attributes). Use MPQ_FILE_DEFAULT_INTERNAL to set default flags
+  @DWORD()
+  external int dwFileFlags2;
+
+  /// File flags for (signature). Use MPQ_FILE_DEFAULT_INTERNAL to set default flags
+  @DWORD()
+  external int dwFileFlags3;
+
+  /// Flags for the (attributes) file. If 0, no attributes will be created
+  @DWORD()
+  external int dwAttrFlags;
+
+  /// Sector size for compressed files
+  @DWORD()
+  external int dwSectorSize;
+
+  /// Size of raw data chunk
+  @DWORD()
+  external int dwRawChunkSize;
+
+  /// File limit for the MPQ
+  @DWORD()
+  external int dwMaxFileCount;
+}
+
+class _SFILE_MARKERS extends ffi.Struct {
+  /// Size of this structure, in bytes
+  @DWORD()
+  external int dwSize;
+
+  /// Alternate MPQ header marker
+  @DWORD()
+  external int dwSignature;
+
+  /// Replacement for "(hash table)"
+  external ffi.Pointer<ffi.Char> szHashTableKey;
+
+  /// Replacement for "(block table)"
+  external ffi.Pointer<ffi.Char> szBlockTableKey;
+}
+
+/// Structure used by FileStream_GetBitmap
+class TStreamBitmap extends ffi.Struct {
+  /// Size of the stream, in bytes
+  @ULONGLONG()
+  external int StreamSize;
+
+  /// Size of the block map, in bytes
+  @DWORD()
+  external int BitmapSize;
+
+  /// Number of blocks in the stream
+  @DWORD()
+  external int BlockCount;
+
+  /// Size of one block
+  @DWORD()
+  external int BlockSize;
+
+  /// Nonzero if the file is complete
+  @DWORD()
+  external int IsComplete;
+}
+
+typedef TCHAR = ffi.Char;
+typedef SFILE_DOWNLOAD_CALLBACK = ffi.Pointer<
+    ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<ffi.Void>, ULONGLONG, DWORD)>>;
+typedef PSFILE_MARKERS = ffi.Pointer<_SFILE_MARKERS>;
+typedef HANDLE = ffi.Pointer<ffi.Void>;
+typedef PSFILE_CREATE_MPQ = ffi.Pointer<_SFILE_CREATE_MPQ>;
+typedef LONG = ffi.Int;
+typedef LPOVERLAPPED = ffi.Pointer<ffi.Void>;
+
+/// Structure for SFileFindFirstFile and SFileFindNextFile
+typedef SFILE_FIND_DATA = _SFILE_FIND_DATA;
+
+const int STORMLIB_VERSION = 2328;
+
+const String STORMLIB_VERSION_STRING = '9.24';
+
+const int ID_MPQ = 441536589;
+
+const int ID_MPQ_USERDATA = 458313805;
+
+const int ID_MPK = 441143373;
+
+const int ID_MPK_VERSION_2000 = 808464434;
+
+const int ERROR_AVI_FILE = 10000;
+
+const int ERROR_UNKNOWN_FILE_KEY = 10001;
+
+const int ERROR_CHECKSUM_ERROR = 10002;
+
+const int ERROR_INTERNAL_FILE = 10003;
+
+const int ERROR_BASE_FILE_MISSING = 10004;
+
+const int ERROR_MARKED_FOR_DELETE = 10005;
+
+const int ERROR_FILE_INCOMPLETE = 10006;
+
+const int ERROR_UNKNOWN_FILE_NAMES = 10007;
+
+const int ERROR_CANT_FIND_PATCH_PREFIX = 10008;
+
+const int ERROR_FAKE_MPQ_HEADER = 10009;
+
+const int HASH_TABLE_SIZE_MIN = 4;
+
+const int HASH_TABLE_SIZE_DEFAULT = 4096;
+
+const int HASH_TABLE_SIZE_MAX = 524288;
+
+const int HASH_ENTRY_DELETED = 4294967294;
+
+const int HASH_ENTRY_FREE = 4294967295;
+
+const int HET_ENTRY_DELETED = 128;
+
+const int HET_ENTRY_FREE = 0;
+
+const int SFILE_OPEN_HARD_DISK_FILE = 2;
+
+const int SFILE_OPEN_CDROM_FILE = 3;
+
+const int SFILE_OPEN_FROM_MPQ = 0;
+
+const int SFILE_OPEN_CHECK_EXISTS = 4294967292;
+
+const int SFILE_OPEN_BASE_FILE = 4294967293;
+
+const int SFILE_OPEN_ANY_LOCALE = 4294967294;
+
+const int SFILE_OPEN_LOCAL_FILE = 4294967295;
+
+const int MPQ_FLAG_READ_ONLY = 1;
+
+const int MPQ_FLAG_CHANGED = 2;
+
+const int MPQ_FLAG_MALFORMED = 4;
+
+const int MPQ_FLAG_HASH_TABLE_CUT = 8;
+
+const int MPQ_FLAG_BLOCK_TABLE_CUT = 16;
+
+const int MPQ_FLAG_CHECK_SECTOR_CRC = 32;
+
+const int MPQ_FLAG_SAVING_TABLES = 64;
+
+const int MPQ_FLAG_PATCH = 128;
+
+const int MPQ_FLAG_WAR3_MAP = 256;
+
+const int MPQ_FLAG_STARCRAFT_BETA = 512;
+
+const int MPQ_FLAG_LISTFILE_NONE = 1024;
+
+const int MPQ_FLAG_LISTFILE_NEW = 2048;
+
+const int MPQ_FLAG_LISTFILE_FORCE = 4096;
+
+const int MPQ_FLAG_ATTRIBUTES_NONE = 8192;
+
+const int MPQ_FLAG_ATTRIBUTES_NEW = 16384;
+
+const int MPQ_FLAG_SIGNATURE_NONE = 32768;
+
+const int MPQ_FLAG_SIGNATURE_NEW = 65536;
+
+const int MPQ_SUBTYPE_MPQ = 0;
+
+const int MPQ_SUBTYPE_SQP = 1;
+
+const int MPQ_SUBTYPE_MPK = 2;
+
+const int SFILE_INVALID_SIZE = 4294967295;
+
+const int SFILE_INVALID_POS = 4294967295;
+
+const int SFILE_INVALID_ATTRIBUTES = 4294967295;
+
+const int MPQ_FILE_IMPLODE = 256;
+
+const int MPQ_FILE_COMPRESS = 512;
+
+const int MPQ_FILE_ENCRYPTED = 65536;
+
+const int MPQ_FILE_FIX_KEY = 131072;
+
+const int MPQ_FILE_PATCH_FILE = 1048576;
+
+const int MPQ_FILE_SINGLE_UNIT = 16777216;
+
+const int MPQ_FILE_DELETE_MARKER = 33554432;
+
+const int MPQ_FILE_SECTOR_CRC = 67108864;
+
+const int MPQ_FILE_SIGNATURE = 268435456;
+
+const int MPQ_FILE_EXISTS = 2147483648;
+
+const int MPQ_FILE_REPLACEEXISTING = 2147483648;
+
+const int MPQ_FILE_COMPRESS_MASK = 65280;
+
+const int MPQ_FILE_DEFAULT_INTERNAL = 4294967295;
+
+const int MPQ_FILE_VALID_FLAGS = 2534605568;
+
+const int MPQ_FILE_VALID_FLAGS_W3X = 2516779776;
+
+const int MPQ_FILE_VALID_FLAGS_SCX = 2147681024;
+
+const int BLOCK_INDEX_MASK = 268435455;
+
+const int MPQ_COMPRESSION_HUFFMANN = 1;
+
+const int MPQ_COMPRESSION_ZLIB = 2;
+
+const int MPQ_COMPRESSION_PKWARE = 8;
+
+const int MPQ_COMPRESSION_BZIP2 = 16;
+
+const int MPQ_COMPRESSION_SPARSE = 32;
+
+const int MPQ_COMPRESSION_ADPCM_MONO = 64;
+
+const int MPQ_COMPRESSION_ADPCM_STEREO = 128;
+
+const int MPQ_COMPRESSION_LZMA = 18;
+
+const int MPQ_COMPRESSION_NEXT_SAME = 4294967295;
+
+const int MPQ_WAVE_QUALITY_HIGH = 0;
+
+const int MPQ_WAVE_QUALITY_MEDIUM = 1;
+
+const int MPQ_WAVE_QUALITY_LOW = 2;
+
+const int HET_TABLE_SIGNATURE = 441730376;
+
+const int BET_TABLE_SIGNATURE = 441730370;
+
+const int MPQ_KEY_HASH_TABLE = 3283040112;
+
+const int MPQ_KEY_BLOCK_TABLE = 3968054179;
+
+const String LISTFILE_NAME = '(listfile)';
+
+const String SIGNATURE_NAME = '(signature)';
+
+const String ATTRIBUTES_NAME = '(attributes)';
+
+const String PATCH_METADATA_NAME = '(patch_metadata)';
+
+const int MPQ_FORMAT_VERSION_1 = 0;
+
+const int MPQ_FORMAT_VERSION_2 = 1;
+
+const int MPQ_FORMAT_VERSION_3 = 2;
+
+const int MPQ_FORMAT_VERSION_4 = 3;
+
+const int MPQ_ATTRIBUTE_CRC32 = 1;
+
+const int MPQ_ATTRIBUTE_FILETIME = 2;
+
+const int MPQ_ATTRIBUTE_MD5 = 4;
+
+const int MPQ_ATTRIBUTE_PATCH_BIT = 8;
+
+const int MPQ_ATTRIBUTE_ALL = 15;
+
+const int MPQ_ATTRIBUTES_V1 = 100;
+
+const int BASE_PROVIDER_FILE = 0;
+
+const int BASE_PROVIDER_MAP = 1;
+
+const int BASE_PROVIDER_HTTP = 2;
+
+const int BASE_PROVIDER_MASK = 15;
+
+const int STREAM_PROVIDER_FLAT = 0;
+
+const int STREAM_PROVIDER_PARTIAL = 16;
+
+const int STREAM_PROVIDER_MPQE = 32;
+
+const int STREAM_PROVIDER_BLOCK4 = 48;
+
+const int STREAM_PROVIDER_MASK = 240;
+
+const int STREAM_FLAG_READ_ONLY = 256;
+
+const int STREAM_FLAG_WRITE_SHARE = 512;
+
+const int STREAM_FLAG_USE_BITMAP = 1024;
+
+const int STREAM_OPTIONS_MASK = 65280;
+
+const int STREAM_PROVIDERS_MASK = 255;
+
+const int STREAM_FLAGS_MASK = 65535;
+
+const int MPQ_OPEN_NO_LISTFILE = 65536;
+
+const int MPQ_OPEN_NO_ATTRIBUTES = 131072;
+
+const int MPQ_OPEN_NO_HEADER_SEARCH = 262144;
+
+const int MPQ_OPEN_FORCE_MPQ_V1 = 524288;
+
+const int MPQ_OPEN_CHECK_SECTOR_CRC = 1048576;
+
+const int MPQ_OPEN_PATCH = 2097152;
+
+const int MPQ_OPEN_FORCE_LISTFILE = 4194304;
+
+const int MPQ_OPEN_READ_ONLY = 256;
+
+const int MPQ_CREATE_LISTFILE = 1048576;
+
+const int MPQ_CREATE_ATTRIBUTES = 2097152;
+
+const int MPQ_CREATE_SIGNATURE = 4194304;
+
+const int MPQ_CREATE_ARCHIVE_V1 = 0;
+
+const int MPQ_CREATE_ARCHIVE_V2 = 16777216;
+
+const int MPQ_CREATE_ARCHIVE_V3 = 33554432;
+
+const int MPQ_CREATE_ARCHIVE_V4 = 50331648;
+
+const int MPQ_CREATE_ARCHIVE_VMASK = 251658240;
+
+const int FLAGS_TO_FORMAT_SHIFT = 24;
+
+const int SFILE_VERIFY_SECTOR_CRC = 1;
+
+const int SFILE_VERIFY_FILE_CRC = 2;
+
+const int SFILE_VERIFY_FILE_MD5 = 4;
+
+const int SFILE_VERIFY_RAW_MD5 = 8;
+
+const int SFILE_VERIFY_ALL = 15;
+
+const int VERIFY_OPEN_ERROR = 1;
+
+const int VERIFY_READ_ERROR = 2;
+
+const int VERIFY_FILE_HAS_SECTOR_CRC = 4;
+
+const int VERIFY_FILE_SECTOR_CRC_ERROR = 8;
+
+const int VERIFY_FILE_HAS_CHECKSUM = 16;
+
+const int VERIFY_FILE_CHECKSUM_ERROR = 32;
+
+const int VERIFY_FILE_HAS_MD5 = 64;
+
+const int VERIFY_FILE_MD5_ERROR = 128;
+
+const int VERIFY_FILE_HAS_RAW_MD5 = 256;
+
+const int VERIFY_FILE_RAW_MD5_ERROR = 512;
+
+const int VERIFY_FILE_ERROR_MASK = 683;
+
+const int SFILE_VERIFY_MPQ_HEADER = 1;
+
+const int SFILE_VERIFY_HET_TABLE = 2;
+
+const int SFILE_VERIFY_BET_TABLE = 3;
+
+const int SFILE_VERIFY_HASH_TABLE = 4;
+
+const int SFILE_VERIFY_BLOCK_TABLE = 5;
+
+const int SFILE_VERIFY_HIBLOCK_TABLE = 6;
+
+const int SFILE_VERIFY_FILE = 7;
+
+const int SIGNATURE_TYPE_NONE = 0;
+
+const int SIGNATURE_TYPE_WEAK = 1;
+
+const int SIGNATURE_TYPE_STRONG = 2;
+
+const int ERROR_NO_SIGNATURE = 0;
+
+const int ERROR_VERIFY_FAILED = 1;
+
+const int ERROR_WEAK_SIGNATURE_OK = 2;
+
+const int ERROR_WEAK_SIGNATURE_ERROR = 3;
+
+const int ERROR_STRONG_SIGNATURE_OK = 4;
+
+const int ERROR_STRONG_SIGNATURE_ERROR = 5;
+
+const int MD5_DIGEST_SIZE = 16;
+
+const int SHA1_DIGEST_SIZE = 20;
+
+const int LANG_NEUTRAL = 0;
+
+const int CCB_CHECKING_FILES = 1;
+
+const int CCB_CHECKING_HASH_TABLE = 2;
+
+const int CCB_COPYING_NON_MPQ_DATA = 3;
+
+const int CCB_COMPACTING_FILES = 4;
+
+const int CCB_CLOSING_ARCHIVE = 5;
+
+const int MPQ_HEADER_SIZE_V1 = 32;
+
+const int MPQ_HEADER_SIZE_V2 = 44;
+
+const int MPQ_HEADER_SIZE_V3 = 68;
+
+const int MPQ_HEADER_SIZE_V4 = 208;
+
+const int MPQ_HEADER_DWORDS = 52;
