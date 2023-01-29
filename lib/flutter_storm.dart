@@ -239,6 +239,7 @@ class MPQArchive {
 }
 
 const String _libName = 'storm';
+const String _libNameWindows = 'StormLib';
 const String _libVersion = '9.22.0';
 
 /// The dynamic library in which the symbols for [FlutterStormBindings] can be found.
@@ -250,7 +251,7 @@ final DynamicLibrary _dylib = () {
     return DynamicLibrary.open('lib$_libName.so.$_libVersion');
   }
   if (Platform.isWindows) {
-    return DynamicLibrary.open('$_libName.dll');
+    return DynamicLibrary.open('$_libNameWindows.dll');
   }
   throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
 }();
