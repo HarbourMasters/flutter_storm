@@ -173,14 +173,14 @@ class MPQArchive {
 }
 
 const String _libName = 'storm';
-
+const String _libVersion = '9.22.0';
 /// The dynamic library in which the symbols for [FlutterStormBindings] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
     return DynamicLibrary.open('$_libName.framework/$_libName');
   }
   if (Platform.isAndroid || Platform.isLinux) {
-    return DynamicLibrary.open('lib$_libName.so');
+    return DynamicLibrary.open('lib$_libName.so.$_libVersion');
   }
   if (Platform.isWindows) {
     return DynamicLibrary.open('$_libName.dll');

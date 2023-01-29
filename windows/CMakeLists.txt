@@ -9,24 +9,20 @@ include(FetchContent)
 set(PROJECT_NAME "flutter_storm")
 project(${PROJECT_NAME} LANGUAGES CXX)
 
-# Invoke the build for native code shared with the other target platforms.
-set(STORM_GIT_REPO https://github.com/ladislav-zezula/StormLib.git)
-set(STORM_GIT_COMMIT 3235d01eab95af50c589a615bd8d492f911369f7)
+# Pull StormLib from github and link it as a shared library
 SET(STORM_SKIP_INSTALL ON CACHE BOOL "Ignore stormlib install" FORCE)
-add_definitions(-DSTORMLIB_NO_AUTO_LINK)
-FetchContent_Declare(StormLib GIT_REPOSITORY ${STORM_GIT_REPO} GIT_TAG ${STORM_GIT_COMMIT})
-FetchContent_GetProperties(StormLib)
-if(NOT stormlib_POPULATED)
-  FetchContent_Populate(StormLib)
-  add_subdirectory(${stormlib_SOURCE_DIR} ${stormlib_BINARY_DIR})
-  include_directories(${stormlib_SOURCE_DIR}/src)
-endif()
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Build stormlib as a shared library" FORCE)
+FetchContent_Declare(
+  storm
+  GIT_REPOSITORY https://github.com/ladislav-zezula/StormLib.git
+  GIT_TAG        3846f0b8e2c47320c6b499492496f3e3f2e76821 # v9.22
+)
+FetchContent_MakeAvailable(storm)
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
 set(flutter_storm_bundled_libraries
-  # "${CMAKE_CURRENT_SOURCE_DIR}/lib/libstorm.a"
   $<TARGET_FILE:storm>
   PARENT_SCOPE
 )
