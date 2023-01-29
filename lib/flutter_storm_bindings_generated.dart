@@ -2576,6 +2576,48 @@ typedef LPOVERLAPPED = ffi.Pointer<ffi.Void>;
 /// Structure for SFileFindFirstFile and SFileFindNextFile
 typedef SFILE_FIND_DATA = _SFILE_FIND_DATA;
 
+const int MAX_PATH = 1024;
+
+const int FILE_BEGIN = 0;
+
+const int FILE_CURRENT = 1;
+
+const int FILE_END = 2;
+
+const int O_LARGEFILE = 0;
+
+const int ERROR_SUCCESS = 0;
+
+const int ERROR_FILE_NOT_FOUND = 2;
+
+const int ERROR_ACCESS_DENIED = 1;
+
+const int ERROR_INVALID_HANDLE = 9;
+
+const int ERROR_NOT_ENOUGH_MEMORY = 12;
+
+const int ERROR_NOT_SUPPORTED = 45;
+
+const int ERROR_INVALID_PARAMETER = 22;
+
+const int ERROR_NEGATIVE_SEEK = 29;
+
+const int ERROR_DISK_FULL = 28;
+
+const int ERROR_ALREADY_EXISTS = 17;
+
+const int ERROR_INSUFFICIENT_BUFFER = 55;
+
+const int ERROR_BAD_FORMAT = 1000;
+
+const int ERROR_NO_MORE_FILES = 1001;
+
+const int ERROR_HANDLE_EOF = 1002;
+
+const int ERROR_CAN_NOT_COMPLETE = 1003;
+
+const int ERROR_FILE_CORRUPT = 1004;
+
 const int STORMLIB_VERSION = 2328;
 
 const String STORMLIB_VERSION_STRING = '9.24';

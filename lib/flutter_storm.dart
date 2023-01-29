@@ -5,8 +5,6 @@ import 'package:ffi/ffi.dart';
 
 import 'flutter_storm_bindings_generated.dart';
 
-const int ERROR_NO_MORE_FILES = 1001;
-
 class StormLibException {
   final int code;
   final String message;
@@ -263,7 +261,7 @@ final FlutterStormBindings _bindings = FlutterStormBindings(_dylib);
 
 extension FileFindData on SFILE_FIND_DATA {
   Iterable<int> spreadCFileName() sync* {
-    for (var i = 0; i < 1024; i++) {
+    for (var i = 0; i < MAX_PATH; i++) {
       final value = cFileName[i];
       if (value == 0) {
         return;

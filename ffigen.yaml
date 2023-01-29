@@ -8,8 +8,10 @@ output: 'lib/flutter_storm_bindings_generated.dart'
 headers:
   entry-points:
     - 'src/StormLib.h'
+    - 'src/StormPort.h'
   include-directives:
     - 'src/StormLib.h'
+    - 'src/StormPort.h'
 preamble: |
   // ignore_for_file: always_specify_types
   // ignore_for_file: camel_case_types
