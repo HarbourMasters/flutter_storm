@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       return;
     }
 
-    FindFileHandle hFind = FindFileHandle();
+    MPQFindFileHandle hFind = MPQFindFileHandle();
     mpqArchive.findFirstFile("*", hFind, null);
     if (hFind == null) {
       print("Failed to find first file");
@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> writeDemoFile(String mpqPath, String filePath) async {
     File data = File(filePath);
-    MPQFile file = mpqArchive!.createFile(
+    MPQCreateFileHandle file = mpqArchive!.createFile(
         filePath.split(Platform.pathSeparator).last,
         DateTime.now().millisecondsSinceEpoch ~/ 1000,
         data.lengthSync(),

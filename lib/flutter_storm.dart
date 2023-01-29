@@ -17,7 +17,7 @@ class StormLibException {
   String toString() => message;
 }
 
-class FindFileHandle {
+class MPQFindFileHandle {
   // char   cFileName[MAX_PATH];              // Name of the found file
   // char * szPlainName;                      // Plain name of the found file
   // DWORD  dwHashIndex;                      // Hash table index for the file
@@ -48,10 +48,10 @@ class FindFileHandle {
   }
 }
 
-class MPQFile {
+class MPQCreateFileHandle {
   final Pointer<HANDLE> _handle = calloc();
 
-  /// Wwrites data to the archive.
+  /// Writes data to the archive.
   void write(Uint8List data, int fileSize, int compression) {
     final pointer = calloc<Uint8>(data.length);
     for (int i = 0; i < data.length; i++) {
@@ -66,6 +66,54 @@ class MPQFile {
       int error = _bindings.GetLastError();
       throw StormLibException(error, 'SFileWriteFile failed with error $error');
     }
+  }
+
+  /// Finalizes the creationg of the file in the MPQ archive.
+  void finish() {
+    final int ret = _bindings.SFileFinishFile(_handle.value);
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileFinishFile failed with error $error');
+    }
+  }
+}
+
+class MPQFile {
+  final Pointer<HANDLE> _handle = calloc();
+
+  void close() {
+    _bindings.SFileCloseFile(_handle.value);
+    calloc.free(_handle);
+  }
+
+  /// Returns the size of the file in bytes.
+  int size() {
+    final int ret = _bindings.SFileGetFileSize(_handle.value, nullptr);
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileGetFileSize failed with error $error');
+    }
+
+    return ret;
+  }
+
+  /// Reads data from the file.
+  Uint8List read(int bytesToRead) {
+    final pointer = calloc<Uint8>(bytesToRead);
+    final voidStar = pointer.cast<Void>();
+
+    final int ret = _bindings.SFileReadFile(
+        _handle.value, voidStar, bytesToRead, nullptr, nullptr);
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(error, 'SFileReadFile failed with error $error');
+    }
+
+    final data = Uint8List.fromList(pointer.asTypedList(bytesToRead));
+    calloc.free(pointer);
+    return data;
   }
 }
 
@@ -113,7 +161,7 @@ class MPQArchive {
 
   /// Searches the MPQ archive and returns name of the first file that matches the given search mask and exists in the MPQ archive.
   /// When the caller finishes searching, the given find file handle must be freed by calling close().
-  void findFirstFile(String searchMask, FindFileHandle findFileHandle,
+  void findFirstFile(String searchMask, MPQFindFileHandle findFileHandle,
       String? additionalListFile) {
     final szMask = searchMask.toNativeUtf8().cast<Char>();
     final szListFile = additionalListFile != null
@@ -140,7 +188,7 @@ class MPQArchive {
 
   /// Continues search that has been initiated by findFirstFile.
   /// When the caller finishes searching, the referenced file handle must be freed by calling close.
-  void findNextFile(FindFileHandle findFileHandle) {
+  void findNextFile(MPQFindFileHandle findFileHandle) {
     final ret = _bindings.SFileFindNextFile(
         findFileHandle._handle, findFileHandle._data);
 
@@ -152,14 +200,13 @@ class MPQArchive {
   }
 
   /// Creates a new file within archive and prepares it for storing the data.
-  MPQFile createFile(
+  MPQCreateFileHandle createFile(
       String name, int fileTime, int fileSize, int locale, int flags) {
     final szFileName = name.toNativeUtf8().cast<Char>();
-    MPQFile file = MPQFile();
+    MPQCreateFileHandle file = MPQCreateFileHandle();
 
     final ret = _bindings.SFileCreateFile(_handle.value, szFileName, fileTime,
         fileSize, locale, flags, file._handle);
-
     malloc.free(szFileName);
 
     if (ret == 0) {
@@ -170,10 +217,30 @@ class MPQArchive {
 
     return file;
   }
+
+  // Opens a file from MPQ archive. The file is only open for read.
+  // The file must be closed by calling close. All files must be closed before the MPQ archive is closed.
+  MPQFile openFileEx(String name, int scope) {
+    final szFileName = name.toNativeUtf8().cast<Char>();
+    MPQFile file = MPQFile();
+
+    final ret = _bindings.SFileOpenFileEx(
+        _handle.value, szFileName, scope, file._handle);
+    malloc.free(szFileName);
+
+    if (ret == 0) {
+      int error = _bindings.GetLastError();
+      throw StormLibException(
+          error, 'SFileOpenFileEx failed with error $error');
+    }
+
+    return file;
+  }
 }
 
 const String _libName = 'storm';
 const String _libVersion = '9.22.0';
+
 /// The dynamic library in which the symbols for [FlutterStormBindings] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
