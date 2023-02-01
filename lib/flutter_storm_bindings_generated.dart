@@ -593,7 +593,7 @@ class FlutterStormBindings {
 
   int SFileUpdateFileAttributes(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
   ) {
     return _SFileUpdateFileAttributes(
       hMpq,
@@ -602,17 +602,17 @@ class FlutterStormBindings {
   }
 
   late final _SFileUpdateFileAttributesPtr = _lookup<
-          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>)>>(
       'SFileUpdateFileAttributes');
   late final _SFileUpdateFileAttributes = _SFileUpdateFileAttributesPtr
-      .asFunction<int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+      .asFunction<int Function(HANDLE, ffi.Pointer<TCHAR>)>();
 
   /// -----------------------------------------------------------------------------
   /// Functions for manipulation with patch archives
   int SFileOpenPatchArchive(
     HANDLE hMpq,
     ffi.Pointer<TCHAR> szPatchMpqName,
-    ffi.Pointer<ffi.Char> szPatchPathPrefix,
+    ffi.Pointer<TCHAR> szPatchPathPrefix,
     int dwFlags,
   ) {
     return _SFileOpenPatchArchive(
@@ -625,10 +625,10 @@ class FlutterStormBindings {
 
   late final _SFileOpenPatchArchivePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               DWORD)>>('SFileOpenPatchArchive');
   late final _SFileOpenPatchArchive = _SFileOpenPatchArchivePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>, int)>();
 
   int SFileIsPatchedArchive(
     HANDLE hMpq,
@@ -647,7 +647,7 @@ class FlutterStormBindings {
   /// Reading from MPQ file
   int SFileHasFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
   ) {
     return _SFileHasFile(
       hMpq,
@@ -656,14 +656,14 @@ class FlutterStormBindings {
   }
 
   late final _SFileHasFilePtr = _lookup<
-          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>)>>(
       'SFileHasFile');
-  late final _SFileHasFile = _SFileHasFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+  late final _SFileHasFile =
+      _SFileHasFilePtr.asFunction<int Function(HANDLE, ffi.Pointer<TCHAR>)>();
 
   int SFileOpenFileEx(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
     int dwSearchScope,
     ffi.Pointer<HANDLE> phFile,
   ) {
@@ -677,10 +677,10 @@ class FlutterStormBindings {
 
   late final _SFileOpenFileExPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, DWORD,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, DWORD,
               ffi.Pointer<HANDLE>)>>('SFileOpenFileEx');
   late final _SFileOpenFileEx = _SFileOpenFileExPtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, int, ffi.Pointer<HANDLE>)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, int, ffi.Pointer<HANDLE>)>();
 
   int SFileGetFileSize(
     HANDLE hFile,
@@ -782,7 +782,7 @@ class FlutterStormBindings {
 
   int SFileGetFileName(
     HANDLE hFile,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
   ) {
     return _SFileGetFileName(
       hFile,
@@ -791,10 +791,10 @@ class FlutterStormBindings {
   }
 
   late final _SFileGetFileNamePtr = _lookup<
-          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>)>>(
+          ffi.NativeFunction<ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>)>>(
       'SFileGetFileName');
   late final _SFileGetFileName = _SFileGetFileNamePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>)>();
 
   int SFileFreeFileInfo(
     ffi.Pointer<ffi.Void> pvFileInfo,
@@ -816,7 +816,7 @@ class FlutterStormBindings {
   /// High-level extract function
   int SFileExtractFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szToExtract,
+    ffi.Pointer<TCHAR> szToExtract,
     ffi.Pointer<TCHAR> szExtracted,
     int dwSearchScope,
   ) {
@@ -830,17 +830,17 @@ class FlutterStormBindings {
 
   late final _SFileExtractFilePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<TCHAR>,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               DWORD)>>('SFileExtractFile');
   late final _SFileExtractFile = _SFileExtractFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<TCHAR>, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>, int)>();
 
   /// Generates file CRC32
   int SFileGetFileChecksums(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
     LPDWORD pdwCrc32,
-    ffi.Pointer<ffi.Char> pMD5,
+    ffi.Pointer<TCHAR> pMD5,
   ) {
     return _SFileGetFileChecksums(
       hMpq,
@@ -852,17 +852,16 @@ class FlutterStormBindings {
 
   late final _SFileGetFileChecksumsPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, LPDWORD,
-              ffi.Pointer<ffi.Char>)>>('SFileGetFileChecksums');
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, LPDWORD,
+              ffi.Pointer<TCHAR>)>>('SFileGetFileChecksums');
   late final _SFileGetFileChecksums = _SFileGetFileChecksumsPtr.asFunction<
-      int Function(
-          HANDLE, ffi.Pointer<ffi.Char>, LPDWORD, ffi.Pointer<ffi.Char>)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, LPDWORD, ffi.Pointer<TCHAR>)>();
 
   /// Verifies file against its checksums stored in (attributes) attributes (depending on dwFlags).
   /// For dwFlags, use one or more of MPQ_ATTRIBUTE_MD5
   int SFileVerifyFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
     int dwFlags,
   ) {
     return _SFileVerifyFile(
@@ -875,15 +874,15 @@ class FlutterStormBindings {
   late final _SFileVerifyFilePtr = _lookup<
       ffi.NativeFunction<
           DWORD Function(
-              HANDLE, ffi.Pointer<ffi.Char>, DWORD)>>('SFileVerifyFile');
+              HANDLE, ffi.Pointer<TCHAR>, DWORD)>>('SFileVerifyFile');
   late final _SFileVerifyFile = _SFileVerifyFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, int)>();
 
   /// Verifies raw data of the archive. Only works for MPQs version 4 or newer
   int SFileVerifyRawData(
     HANDLE hMpq,
     int dwWhatToVerify,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
   ) {
     return _SFileVerifyRawData(
       hMpq,
@@ -895,9 +894,9 @@ class FlutterStormBindings {
   late final _SFileVerifyRawDataPtr = _lookup<
       ffi.NativeFunction<
           DWORD Function(
-              HANDLE, DWORD, ffi.Pointer<ffi.Char>)>>('SFileVerifyRawData');
+              HANDLE, DWORD, ffi.Pointer<TCHAR>)>>('SFileVerifyRawData');
   late final _SFileVerifyRawData = _SFileVerifyRawDataPtr.asFunction<
-      int Function(HANDLE, int, ffi.Pointer<ffi.Char>)>();
+      int Function(HANDLE, int, ffi.Pointer<TCHAR>)>();
 
   /// Verifies the signature, if present
   int SFileSignArchive(
@@ -933,7 +932,7 @@ class FlutterStormBindings {
   /// Functions for file searching
   HANDLE SFileFindFirstFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szMask,
+    ffi.Pointer<TCHAR> szMask,
     ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
     ffi.Pointer<TCHAR> szListFile,
   ) {
@@ -949,12 +948,12 @@ class FlutterStormBindings {
       ffi.NativeFunction<
           HANDLE Function(
               HANDLE,
-              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<TCHAR>,
               ffi.Pointer<SFILE_FIND_DATA>,
               ffi.Pointer<TCHAR>)>>('SFileFindFirstFile');
   late final _SFileFindFirstFile = _SFileFindFirstFilePtr.asFunction<
-      HANDLE Function(HANDLE, ffi.Pointer<ffi.Char>,
-          ffi.Pointer<SFILE_FIND_DATA>, ffi.Pointer<TCHAR>)>();
+      HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<SFILE_FIND_DATA>,
+          ffi.Pointer<TCHAR>)>();
 
   int SFileFindNextFile(
     HANDLE hFind,
@@ -989,7 +988,7 @@ class FlutterStormBindings {
   HANDLE SListFileFindFirstFile(
     HANDLE hMpq,
     ffi.Pointer<TCHAR> szListFile,
-    ffi.Pointer<ffi.Char> szMask,
+    ffi.Pointer<TCHAR> szMask,
     ffi.Pointer<SFILE_FIND_DATA> lpFindFileData,
   ) {
     return _SListFileFindFirstFile(
@@ -1002,10 +1001,10 @@ class FlutterStormBindings {
 
   late final _SListFileFindFirstFilePtr = _lookup<
       ffi.NativeFunction<
-          HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               ffi.Pointer<SFILE_FIND_DATA>)>>('SListFileFindFirstFile');
   late final _SListFileFindFirstFile = _SListFileFindFirstFilePtr.asFunction<
-      HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+      HANDLE Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
           ffi.Pointer<SFILE_FIND_DATA>)>();
 
   int SListFileFindNextFile(
@@ -1042,7 +1041,7 @@ class FlutterStormBindings {
   /// Locale support
   int SFileEnumLocales(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
     ffi.Pointer<LCID> PtrFileLocales,
     LPDWORD PtrMaxLocales,
     int dwSearchScope,
@@ -1058,17 +1057,17 @@ class FlutterStormBindings {
 
   late final _SFileEnumLocalesPtr = _lookup<
       ffi.NativeFunction<
-          DWORD Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<LCID>,
-              LPDWORD, DWORD)>>('SFileEnumLocales');
+          DWORD Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<LCID>, LPDWORD,
+              DWORD)>>('SFileEnumLocales');
   late final _SFileEnumLocales = _SFileEnumLocalesPtr.asFunction<
       int Function(
-          HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<LCID>, LPDWORD, int)>();
+          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<LCID>, LPDWORD, int)>();
 
   /// -----------------------------------------------------------------------------
   /// Support for adding files to the MPQ
   int SFileCreateFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szArchivedName,
+    ffi.Pointer<TCHAR> szArchivedName,
     int FileTime,
     int dwFileSize,
     int lcFileLocale,
@@ -1088,10 +1087,10 @@ class FlutterStormBindings {
 
   late final _SFileCreateFilePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>, ULONGLONG, DWORD,
-              LCID, DWORD, ffi.Pointer<HANDLE>)>>('SFileCreateFile');
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ULONGLONG, DWORD, LCID,
+              DWORD, ffi.Pointer<HANDLE>)>>('SFileCreateFile');
   late final _SFileCreateFile = _SFileCreateFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, int, int, int, int,
+      int Function(HANDLE, ffi.Pointer<TCHAR>, int, int, int, int,
           ffi.Pointer<HANDLE>)>();
 
   int SFileWriteFile(
@@ -1131,7 +1130,7 @@ class FlutterStormBindings {
   int SFileAddFileEx(
     HANDLE hMpq,
     ffi.Pointer<TCHAR> szFileName,
-    ffi.Pointer<ffi.Char> szArchivedName,
+    ffi.Pointer<TCHAR> szArchivedName,
     int dwFlags,
     int dwCompression,
     int dwCompressionNext,
@@ -1148,16 +1147,16 @@ class FlutterStormBindings {
 
   late final _SFileAddFileExPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               DWORD, DWORD, DWORD)>>('SFileAddFileEx');
   late final _SFileAddFileEx = _SFileAddFileExPtr.asFunction<
       int Function(
-          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int, int, int)>();
+          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>, int, int, int)>();
 
   int SFileAddFile(
     HANDLE hMpq,
     ffi.Pointer<TCHAR> szFileName,
-    ffi.Pointer<ffi.Char> szArchivedName,
+    ffi.Pointer<TCHAR> szArchivedName,
     int dwFlags,
   ) {
     return _SFileAddFile(
@@ -1170,15 +1169,15 @@ class FlutterStormBindings {
 
   late final _SFileAddFilePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               DWORD)>>('SFileAddFile');
   late final _SFileAddFile = _SFileAddFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>, int)>();
 
   int SFileAddWave(
     HANDLE hMpq,
     ffi.Pointer<TCHAR> szFileName,
-    ffi.Pointer<ffi.Char> szArchivedName,
+    ffi.Pointer<TCHAR> szArchivedName,
     int dwFlags,
     int dwQuality,
   ) {
@@ -1193,15 +1192,14 @@ class FlutterStormBindings {
 
   late final _SFileAddWavePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>,
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>,
               DWORD, DWORD)>>('SFileAddWave');
   late final _SFileAddWave = _SFileAddWavePtr.asFunction<
-      int Function(
-          HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<ffi.Char>, int, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>, int, int)>();
 
   int SFileRemoveFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szFileName,
+    ffi.Pointer<TCHAR> szFileName,
     int dwSearchScope,
   ) {
     return _SFileRemoveFile(
@@ -1214,14 +1212,14 @@ class FlutterStormBindings {
   late final _SFileRemoveFilePtr = _lookup<
       ffi.NativeFunction<
           ffi.Char Function(
-              HANDLE, ffi.Pointer<ffi.Char>, DWORD)>>('SFileRemoveFile');
+              HANDLE, ffi.Pointer<TCHAR>, DWORD)>>('SFileRemoveFile');
   late final _SFileRemoveFile = _SFileRemoveFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, int)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, int)>();
 
   int SFileRenameFile(
     HANDLE hMpq,
-    ffi.Pointer<ffi.Char> szOldFileName,
-    ffi.Pointer<ffi.Char> szNewFileName,
+    ffi.Pointer<TCHAR> szOldFileName,
+    ffi.Pointer<TCHAR> szNewFileName,
   ) {
     return _SFileRenameFile(
       hMpq,
@@ -1232,10 +1230,10 @@ class FlutterStormBindings {
 
   late final _SFileRenameFilePtr = _lookup<
       ffi.NativeFunction<
-          ffi.Char Function(HANDLE, ffi.Pointer<ffi.Char>,
-              ffi.Pointer<ffi.Char>)>>('SFileRenameFile');
+          ffi.Char Function(HANDLE, ffi.Pointer<TCHAR>,
+              ffi.Pointer<TCHAR>)>>('SFileRenameFile');
   late final _SFileRenameFile = _SFileRenameFilePtr.asFunction<
-      int Function(HANDLE, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+      int Function(HANDLE, ffi.Pointer<TCHAR>, ffi.Pointer<TCHAR>)>();
 
   int SFileSetFileLocale(
     HANDLE hFile,
@@ -1879,7 +1877,7 @@ class _TFileEntry extends ffi.Struct {
   external ffi.Array<BYTE> md5;
 
   /// File name. NULL if not known.
-  external ffi.Pointer<ffi.Char> szFileName;
+  external ffi.Pointer<TCHAR> szFileName;
 }
 
 /// Common header for HET and BET tables
@@ -2310,7 +2308,7 @@ typedef TFileEntry = _TFileEntry;
 
 /// Pointer to hashing function
 typedef HASH_STRING = ffi
-    .Pointer<ffi.NativeFunction<DWORD Function(ffi.Pointer<ffi.Char>, DWORD)>>;
+    .Pointer<ffi.NativeFunction<DWORD Function(ffi.Pointer<TCHAR>, DWORD)>>;
 typedef SFILE_ADDFILE_CALLBACK = ffi.Pointer<
     ffi.NativeFunction<
         ffi.Void Function(ffi.Pointer<ffi.Void>, DWORD, DWORD, ffi.Char)>>;
@@ -2438,7 +2436,7 @@ class _SFILE_FIND_DATA extends ffi.Struct {
   external ffi.Array<ffi.Char> cFileName;
 
   /// Plain name of the found file
-  external ffi.Pointer<ffi.Char> szPlainName;
+  external ffi.Pointer<TCHAR> szPlainName;
 
   /// Hash table index for the file (HAH_ENTRY_FREE if no hash table)
   @DWORD()
@@ -2534,10 +2532,10 @@ class _SFILE_MARKERS extends ffi.Struct {
   external int dwSignature;
 
   /// Replacement for "(hash table)"
-  external ffi.Pointer<ffi.Char> szHashTableKey;
+  external ffi.Pointer<TCHAR> szHashTableKey;
 
   /// Replacement for "(block table)"
-  external ffi.Pointer<ffi.Char> szBlockTableKey;
+  external ffi.Pointer<TCHAR> szBlockTableKey;
 }
 
 /// Structure used by FileStream_GetBitmap
@@ -2563,7 +2561,7 @@ class TStreamBitmap extends ffi.Struct {
   external int IsComplete;
 }
 
-typedef TCHAR = ffi.Char;
+typedef TCHAR = ffi.WChar;
 typedef SFILE_DOWNLOAD_CALLBACK = ffi.Pointer<
     ffi.NativeFunction<
         ffi.Void Function(ffi.Pointer<ffi.Void>, ULONGLONG, DWORD)>>;

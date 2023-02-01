@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_storm/flutter_storm.dart';
-import 'package:flutter_storm/flutter_storm_bindings_generated.dart';
+import 'package:flutter_storm/flutter_storm_defines.dart';
 import 'dart:async';
 
 import 'package:flutter_storm_example/feedback.dart';
@@ -19,7 +19,6 @@ void main() async {
   runApp(const MaterialApp(home: MyApp()));
 }
 
-String STORMLIB_VERSION = "v9.24";
 String STORMLIB_REPO = "https://github.com/ladislav-zezula/StormLib";
 
 class MyApp extends StatefulWidget {
@@ -61,14 +60,22 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       return;
     }
 
-    MPQFindFileHandle hFind = MPQFindFileHandle();
-    mpqArchive.findFirstFile("*", hFind, null);
-    if (hFind == null) {
+    _otrFiles.clear();
+    FileFindResource hFind = FileFindResource();
+    try {
+      mpqArchive.findFirstFile("*", hFind, null);
+      String? fileName = hFind.fileName();
+      if (fileName != null &&
+          fileName != SIGNATURE_NAME &&
+          fileName != LISTFILE_NAME) {
+        _otrFiles.add(fileName);
+        print("Found file: $fileName");
+      }
+    } on StormLibException catch (e) {
       print("Failed to find first file");
+      print(e.message);
       return;
     }
-
-    _otrFiles.clear();
 
     bool fileFound = false;
 
@@ -77,15 +84,20 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         mpqArchive.findNextFile(hFind);
         fileFound = true;
         String? fileName = hFind.fileName();
-        if (fileName != null && fileName != "(signature)") {
+        if (fileName != null &&
+            fileName != SIGNATURE_NAME &&
+            fileName != LISTFILE_NAME) {
           _otrFiles.add(fileName);
           print("Found file: $fileName");
         }
       } on StormLibException catch (e) {
         if (e.code == ERROR_NO_MORE_FILES) {
-          print("Failed to get file name: $e");
-          fileFound = false;
+          print("Reached end of file list");
+        } else if (e.code == ERROR_SUCCESS) {
+          // TODO: Figure out why this triggers on Windows
         }
+        print(e.message);
+        fileFound = false;
       }
     } while (fileFound);
 
@@ -99,7 +111,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> writeDemoFile(String mpqPath, String filePath) async {
     File data = File(filePath);
-    MPQCreateFileHandle file = mpqArchive!.createFile(
+    CreateFileResource file = mpqArchive!.createFile(
         filePath.split(Platform.pathSeparator).last,
         DateTime.now().millisecondsSinceEpoch ~/ 1000,
         data.lengthSync(),
@@ -261,7 +273,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                           fontSize: 15, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 10),
                   const Text("StormLib Version:"),
-                  Text(STORMLIB_VERSION,
+                  Text(STORMLIB_VERSION_STRING,
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 10),

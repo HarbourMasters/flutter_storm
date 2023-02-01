@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 
-import 'flutter_storm_bindings_generated.dart';
+import 'flutter_storm_bindings.dart';
+import 'flutter_storm_types.dart';
+import 'flutter_storm_structs.dart';
+import 'flutter_storm_defines.dart';
 
 class StormLibException {
   final int code;
@@ -15,18 +19,7 @@ class StormLibException {
   String toString() => message;
 }
 
-class MPQFindFileHandle {
-  // char   cFileName[MAX_PATH];              // Name of the found file
-  // char * szPlainName;                      // Plain name of the found file
-  // DWORD  dwHashIndex;                      // Hash table index for the file
-  // DWORD  dwBlockIndex;                     // Block table index for the file
-  // DWORD  dwFileSize;                       // Uncompressed size of the file, in bytes
-  // DWORD  dwFileFlags;                      // MPQ file flags
-  // DWORD  dwCompSize;                       // Compressed file size
-  // DWORD  dwFileTimeLo;                     // Low 32-bits of the file time (0 if not present)
-  // DWORD  dwFileTimeHi;                     // High 32-bits of the file time (0 if not present)
-  // LCID   lcLocale;                         // Locale version
-
+class FileFindResource {
   late HANDLE _handle = calloc();
   final Pointer<SFILE_FIND_DATA> _data = calloc();
 
@@ -42,11 +35,11 @@ class MPQFindFileHandle {
       return null;
     }
 
-    return String.fromCharCodes(_data.ref.spreadCFileName());
+    return utf8.decode(_data.ref.spreadCFileName().toList());
   }
 }
 
-class MPQCreateFileHandle {
+class CreateFileResource {
   final Pointer<HANDLE> _handle = calloc();
 
   /// Writes data to the archive.
@@ -57,10 +50,10 @@ class MPQCreateFileHandle {
     }
     final voidStar = pointer.cast<Void>();
 
-    final int ret = _bindings.SFileWriteFile(
+    final bool success = _bindings.SFileWriteFile(
         _handle.value, voidStar, fileSize, compression);
     calloc.free(pointer);
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(error, 'SFileWriteFile failed with error $error');
     }
@@ -77,7 +70,7 @@ class MPQCreateFileHandle {
   }
 }
 
-class MPQFile {
+class FileResource {
   final Pointer<HANDLE> _handle = calloc();
 
   void close() {
@@ -102,9 +95,10 @@ class MPQFile {
     final pointer = calloc<Uint8>(bytesToRead);
     final voidStar = pointer.cast<Void>();
 
-    final int ret = _bindings.SFileReadFile(
+    final bool success = _bindings.SFileReadFile(
         _handle.value, voidStar, bytesToRead, nullptr, nullptr);
-    if (ret == 0) {
+
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(error, 'SFileReadFile failed with error $error');
     }
@@ -121,13 +115,19 @@ class MPQArchive {
   /// Opens a MPQ archive. During the open operation, the archive is checked for corruptions, internal (listfile) and (attributes) are loaded, unless specified otherwise.
   /// The archive is open for read and write operations, unless MPQ_OPEN_READ_ONLY is specified.
   MPQArchive.open(String path, int priority, int flags) {
-    final mpqName = path.toNativeUtf8().cast<Char>();
+    final Pointer<NativeType> mpqName;
 
-    final int ret =
+    if (Platform.isWindows) {
+      mpqName = path.toNativeUtf16().cast();
+    } else {
+      mpqName = path.toNativeUtf8().cast();
+    }
+
+    final bool success =
         _bindings.SFileOpenArchive(mpqName, priority, flags, _handle);
     malloc.free(mpqName);
 
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(
           error, 'SFileOpenArchive failed with error $error');
@@ -137,13 +137,19 @@ class MPQArchive {
   /// Opens or creates the MPQ archive. The function can also convert an existing file to MPQ archive.
   /// The MPQ archive is always open for write operations.
   MPQArchive.create(String name, int flags, int maxFileCount) {
-    final mpqName = name.toNativeUtf8().cast<Char>();
+    final Pointer<NativeType> mpqName;
 
-    final int ret =
+    if (Platform.isWindows) {
+      mpqName = name.toNativeUtf16().cast();
+    } else {
+      mpqName = name.toNativeUtf8().cast();
+    }
+
+    final bool success =
         _bindings.SFileCreateArchive(mpqName, flags, maxFileCount, _handle);
     malloc.free(mpqName);
 
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(
           error, 'SFileCreateArchive failed with error $error');
@@ -159,15 +165,15 @@ class MPQArchive {
 
   /// Searches the MPQ archive and returns name of the first file that matches the given search mask and exists in the MPQ archive.
   /// When the caller finishes searching, the given find file handle must be freed by calling close().
-  void findFirstFile(String searchMask, MPQFindFileHandle findFileHandle,
+  void findFirstFile(String searchMask, FileFindResource fileFindResource,
       String? additionalListFile) {
-    final szMask = searchMask.toNativeUtf8().cast<Char>();
+    final szMask = searchMask.toNativeUtf8().cast();
     final szListFile = additionalListFile != null
-        ? additionalListFile.toNativeUtf8().cast<Char>()
+        ? additionalListFile.toNativeUtf8().cast()
         : nullptr;
 
-    HANDLE ret = _bindings.SFileFindFirstFile(
-        _handle.value, szMask, findFileHandle._data, szListFile);
+    final HANDLE ret = _bindings.SFileFindFirstFile(
+        _handle.value, szMask, fileFindResource._data, szListFile);
 
     // free the memory
     malloc.free(szMask);
@@ -181,33 +187,35 @@ class MPQArchive {
           error, 'SFileFindFirstFile failed with error $error');
     }
 
-    findFileHandle._handle = ret;
+    fileFindResource._handle = ret;
   }
 
   /// Continues search that has been initiated by findFirstFile.
   /// When the caller finishes searching, the referenced file handle must be freed by calling close.
-  void findNextFile(MPQFindFileHandle findFileHandle) {
-    final ret = _bindings.SFileFindNextFile(
-        findFileHandle._handle, findFileHandle._data);
+  void findNextFile(FileFindResource fileFindResource) {
+    final success = _bindings.SFileFindNextFile(
+        fileFindResource._handle, fileFindResource._data);
 
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
+
       throw StormLibException(
           error, 'SFileFindNextFile failed with error $error');
     }
   }
 
   /// Creates a new file within archive and prepares it for storing the data.
-  MPQCreateFileHandle createFile(
+  CreateFileResource createFile(
       String name, int fileTime, int fileSize, int locale, int flags) {
-    final szFileName = name.toNativeUtf8().cast<Char>();
-    MPQCreateFileHandle file = MPQCreateFileHandle();
+    final szFileName = name.toNativeUtf8().cast();
 
-    final ret = _bindings.SFileCreateFile(_handle.value, szFileName, fileTime,
-        fileSize, locale, flags, file._handle);
+    CreateFileResource file = CreateFileResource();
+
+    final bool success = _bindings.SFileCreateFile(_handle.value, szFileName,
+        fileTime, fileSize, locale, flags, file._handle);
     malloc.free(szFileName);
 
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(
           error, 'SFileCreateFile failed with error $error');
@@ -218,15 +226,15 @@ class MPQArchive {
 
   // Opens a file from MPQ archive. The file is only open for read.
   // The file must be closed by calling close. All files must be closed before the MPQ archive is closed.
-  MPQFile openFileEx(String name, int scope) {
-    final szFileName = name.toNativeUtf8().cast<Char>();
-    MPQFile file = MPQFile();
+  FileResource openFileEx(String name, int scope) {
+    final szFileName = name.toNativeUtf8().cast();
 
-    final ret = _bindings.SFileOpenFileEx(
+    FileResource file = FileResource();
+    final bool success = _bindings.SFileOpenFileEx(
         _handle.value, szFileName, scope, file._handle);
     malloc.free(szFileName);
 
-    if (ret == 0) {
+    if (!success) {
       int error = _bindings.GetLastError();
       throw StormLibException(
           error, 'SFileOpenFileEx failed with error $error');
