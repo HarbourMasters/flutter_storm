@@ -14,8 +14,8 @@ SET(STORM_SKIP_INSTALL ON CACHE BOOL "Ignore stormlib install" FORCE)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build stormlib as a shared library" FORCE)
 FetchContent_Declare(
   storm
-  GIT_REPOSITORY https://github.com/ladislav-zezula/StormLib.git
-  GIT_TAG        3846f0b8e2c47320c6b499492496f3e3f2e76821 # v9.22
+  GIT_REPOSITORY https://github.com/briaguya-ai/StormLib
+  GIT_TAG        ff338b230544f8b2bb68d2fbe075175ed2fd758c
 )
 FetchContent_MakeAvailable(storm)
 
