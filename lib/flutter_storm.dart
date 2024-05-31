@@ -20,8 +20,8 @@ class StormLibException {
 }
 
 class FileFindResource {
-  late HANDLE _handle = calloc();
-  final Pointer<SFILE_FIND_DATA> _data = calloc();
+  late HANDLE _handle = calloc<HANDLE>().value;
+  final Pointer<SFILE_FIND_DATA> _data = calloc<SFILE_FIND_DATA>();
 
   /// Closes a find handle that has been created by SFileFindFirstFile.
   void close() {
@@ -40,7 +40,7 @@ class FileFindResource {
 }
 
 class CreateFileResource {
-  final Pointer<HANDLE> _handle = calloc();
+  final Pointer<HANDLE> _handle = calloc<HANDLE>();
 
   /// Writes data to the archive.
   void write(Uint8List data, int fileSize, int compression) {
@@ -71,7 +71,7 @@ class CreateFileResource {
 }
 
 class FileResource {
-  final Pointer<HANDLE> _handle = calloc();
+  final Pointer<HANDLE> _handle = calloc<HANDLE>();
 
   void close() {
     _bindings.SFileCloseFile(_handle.value);
@@ -110,7 +110,7 @@ class FileResource {
 }
 
 class MPQArchive {
-  final Pointer<HANDLE> _handle = calloc();
+  final Pointer<HANDLE> _handle = calloc<HANDLE>();
 
   /// Opens a MPQ archive. During the open operation, the archive is checked for corruptions, internal (listfile) and (attributes) are loaded, unless specified otherwise.
   /// The archive is open for read and write operations, unless MPQ_OPEN_READ_ONLY is specified.
